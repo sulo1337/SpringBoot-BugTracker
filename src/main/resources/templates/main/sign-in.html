@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="layouts::header">
+    <title>Login Page</title>
+</head>
+
+<body>
+
+<div id="wrapper">
+    <div id="table">
+        <a class="active">Sign in</a>
+    </div>
+    <div id="signin">
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username">Email</label>
+                <input type="text" id="username" name="username" autofocus>
+
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password">
+                <span id="showpwd" class="fa fa-eye-slash"></span>
+            </div>
+           <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+            <div class="form-group">
+                <input type="submit" value="Sign in">
+            </div>
+
+
+        </form>
+        <div class="hr"></div>
+        <a href="#" id="froget-pass">Forget Password?</a>
+
+    </div>
+
+</div>
+</body>
+
+</html>
