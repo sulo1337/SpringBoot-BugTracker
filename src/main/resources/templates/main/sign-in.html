@@ -1,42 +1,54 @@
-<!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="layouts::header">
-    <title>Login Page</title>
+    <title>Log in</title>
 </head>
-
 <body>
+<div class="container">
+    <div style="width:600px;margin-left: auto;margin-right: auto;margin-top:24px;padding: 24px;">
+        <div class="card">
+            <div class="card-header">
+                <i class="fa fa-user"></i> Please Login
+            </div>
+            <div class="card-block" style="padding: 24px;">
+                <form  th:action="@{/login}" method="post">
+                    <fieldset>
+                        <!-- Thymeleaf + Spring Security error display -->
+                        <div th:if="${param.error}" class="alert alert-danger">
+                            Invalid username and password.
+                        </div>
 
-<div id="wrapper">
-    <div id="table">
-        <a class="active">Sign in</a>
+                        <div th:if="${param.logout}" class="alert alert-success">
+                            You have been logged out.
+                        </div>
+
+                        <!-- Login Controls -->
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="text" class="form-control" id="email" name="email"
+                                   placeholder="Email">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password"
+                                   placeholder="Password">
+                        </div>
+
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Remember me?</label>
+                        </div>
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                        <!-- Login Button -->
+                        <div class="form-actions" style="margin-top: 12px;">
+                            <button type="submit" class="btn btn-success">Log in</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
     </div>
-    <div id="signin">
-        <form th:action="@{/login}" method="post">
-            <div class="form-group">
-                <label for="username">Email</label>
-                <input type="text" id="username" name="username" autofocus>
-
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password">
-                <span id="showpwd" class="fa fa-eye-slash"></span>
-            </div>
-           <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-
-            <div class="form-group">
-                <input type="submit" value="Sign in">
-            </div>
-
-
-        </form>
-        <div class="hr"></div>
-        <a href="#" id="froget-pass">Forget Password?</a>
-
-    </div>
-
 </div>
 </body>
-
 </html>

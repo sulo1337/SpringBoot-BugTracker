@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layouts::header"></head>
+<body>
+<header th:replace="layouts::nav"></header>
+<!-- Page content goes here -->
+<div class="container">
+    <div class="jumbotron">
+        <h1 class="display-4">Hello, Welcome to My BugTracker!</h1>
+        <p class="lead">This is the home page of our web application. Anyone can access it, even if they have not signed in.</p>
+        <hr class="my-4">
+        <p>Using this Bug Tracker, you will be able to manage your future projects more efficiently </p>
+        <p class="lead">
+            <a class="btn btn-primary btn-lg" href="#" role="button">Lets Get Started !!!</a>
+        </p>
+    </div>
+</div>
+</body>
+</html>

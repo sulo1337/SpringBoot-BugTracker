@@ -23,7 +23,7 @@ public class SecurityController {
 
 
     @GetMapping("/login")
-    public  String displayHome(){
+    public  String displaySignIn(){
         return "/main/sign-in";
     }
 
@@ -37,7 +37,7 @@ public class SecurityController {
     @PostMapping("/register/save")
     public String saveEmployee(@Valid Employee employee, Model model , BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
-            return "/register";
+            return "/main/register";
         }
         else {
             employee.setPassword(bCryptPasswordEncoder.encode(employee.getPassword()));

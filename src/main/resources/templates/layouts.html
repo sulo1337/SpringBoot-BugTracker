@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:fragment="header">
     <!-- Required meta tags -->
@@ -16,6 +17,29 @@
 </head>
 <body>
 
-</body>
+<!-- Fragment #2 : Navbar contains nav links -->
+<div th:fragment="nav">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Bug Tracker</a>
 
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link"  th:href="@{/dashboard}" ><i class="fa fa-home"></i>Home</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link" href="#"  th:href="@{/profile}" >Profile</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/admin/board}" >Admin Board</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/manager/board}" >Manager Board</a>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+</div>
+</body>
 </html>
