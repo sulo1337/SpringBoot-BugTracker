@@ -1,13 +1,14 @@
 package com.ali.bugtracker.entities;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Getter @Setter @NoArgsConstructor
 public class History {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "history_id_seq")

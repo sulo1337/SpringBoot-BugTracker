@@ -35,14 +35,14 @@ public class SecurityController {
     }
 
     @PostMapping("/register/save")
-    public String saveEmployee(@Valid Employee employee, Model model , BindingResult bindingResult){
+    public String saveEmployee(@Valid Employee employee,BindingResult bindingResult ,Model model){
         if (bindingResult.hasErrors()) {
             return "/main/register";
         }
         else {
             employee.setPassword(bCryptPasswordEncoder.encode(employee.getPassword()));
             employeeRepo.save(employee);
-            return "redirect:/login";
+            return "redirect:/register?success";
         }
     }
 }

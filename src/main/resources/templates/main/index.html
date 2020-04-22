@@ -12,8 +12,12 @@
         <hr class="my-4">
         <p>Using this Bug Tracker, you will be able to manage your future projects more efficiently </p>
         <p class="lead">
-            <a class="btn btn-primary btn-lg" href="#" role="button">Lets Get Started !!!</a>
+            <a  sec:authorize="isAnonymous()" class="btn btn-primary btn-lg" th:href="@{/login}" role="button" >Lets Get Started !!!</a>
+            <a  sec:authorize="isAuthenticated()" class="btn btn-danger btn-lg" th:href="@{/logout}" role="button" >Log Out !!!</a>
         </p>
+    </div>
+    <div th:if="${param.logout}" class="alert alert-success">
+        You have been logged out.
     </div>
 </div>
 </body>

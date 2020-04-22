@@ -43,13 +43,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
+                .antMatchers("/dashboard").authenticated()
                 .and()
                 .formLogin().loginPage("/login")
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/",true).permitAll()
                 .and()
-                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/");
+                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/?logout")
+                .and()
+                .rememberMe().rememberMeParameter("rememberMe").key("rememberMeKey");
 
 
     }

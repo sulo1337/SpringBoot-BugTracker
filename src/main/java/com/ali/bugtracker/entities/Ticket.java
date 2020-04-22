@@ -32,6 +32,9 @@ public class Ticket {
     @OneToMany(mappedBy = "ticketId")
     private List<Comment> comments;
 
+    @OneToMany(mappedBy = "ticketId")
+    private List<History> histories;
+
     public Ticket(Employee employeeId, Project projectId, String name, String description, LocalDateTime creationDate, String status) {
         this.employeeId = employeeId;
         this.projectId = projectId;
