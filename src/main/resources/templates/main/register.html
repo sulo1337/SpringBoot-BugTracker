@@ -43,9 +43,9 @@
                     <div class="col-sm-5 col-md-5">
                         <label>Choose a Role</label>
                     <select class="form-control" id="sel1" th:field="*{role}" name="roles" size="3">
-                        <option value="ROLE_M">Project Manager</option>
-                        <option value="ROLE_P">Programmer</option>
-                        <option value="ROLE_T">Tester</option>
+                        <option th:value="ROLE_M">Project Manager</option>
+                        <option th:value="ROLE_P">Programmer</option>
+                        <option th:value="ROLE_T">Tester</option>
                     </select>
                     <label class="alert alert-danger"  th:if="${#fields.hasErrors('role')}" th:errors="*{role}">role Error</label>
                     </div>

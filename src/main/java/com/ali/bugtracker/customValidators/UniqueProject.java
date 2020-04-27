@@ -5,14 +5,15 @@ import javax.validation.Payload;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({ElementType.FIELD})
 @Retention(RUNTIME)
-@Constraint(validatedBy = UniqueEmailValidator.class)
-public @interface UniqueEmail {
+@Constraint(validatedBy = UniqueProjectValidator.class)
+public @interface UniqueProject {
 
-    String message() default "email already exist";
+    String message() default "project name already exist";
     Class<?>[] groups() default{};
     Class<? extends Payload> [] payload () default {};
 }

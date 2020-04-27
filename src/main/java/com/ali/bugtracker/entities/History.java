@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class History {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "history_id_seq")
-    private long id;
+    private long historyId;
 
     @ManyToOne
     @JoinColumn(name="employee_id")
@@ -23,9 +23,9 @@ public class History {
     private Ticket ticketId;
 
     private String oldStatus;
-    private LocalDateTime modificationDate;
+    private String modificationDate;
 
-    public History(Employee employeeId, Ticket ticketId, String oldStatus, LocalDateTime modificationDate) {
+    public History(Employee employeeId, Ticket ticketId, String oldStatus, String modificationDate) {
         this.employeeId = employeeId;
         this.ticketId = ticketId;
         this.oldStatus = oldStatus;

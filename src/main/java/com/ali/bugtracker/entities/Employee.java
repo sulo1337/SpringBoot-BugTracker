@@ -17,7 +17,7 @@ public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "employee_id_seq")
-    private long id;
+    private long employeeId;
     @NotBlank(message = "first name cannot be empty")
     private String firstName;
     @NotBlank(message = "last name cannot be empty")

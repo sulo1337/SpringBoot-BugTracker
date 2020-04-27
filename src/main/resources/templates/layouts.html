@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
+
+    <!--chart links-->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -18,8 +20,9 @@
 <body>
 
 <!-- Fragment #2 : Navbar contains nav links -->
-<div th:fragment="nav">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+<div th:fragment="nav" style="margin-bottom: 1%">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">Bug Tracker</a>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -30,13 +33,20 @@
                 <li sec:authorize="isAuthenticated()" class="nav-item">
                     <a class="nav-link" href="#"  th:href="@{/profile}" >Profile</a>
                 </li>
-                <li sec:authorize="isAuthenticated()" class="nav-item">
-                    <a class="nav-link" href="#" th:href="@{/admin/board}" >Admin Board</a>
+                <li sec:authorize="hasRole('ROLE_A')" class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/board/admin}" >Admin Board</a>
                 </li>
-                <li sec:authorize="isAuthenticated()" class="nav-item">
-                    <a class="nav-link" href="#" th:href="@{/manager/board}" >Manager Board</a>
+                <li sec:authorize="hasRole('ROLE_M')" class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/board/manager}" >Manager Board</a>
+                </li>
+                <li sec:authorize="hasRole('ROLE_P')" class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/board/programmer}" >Programmer Board</a>
+                </li>
+                <li sec:authorize="hasRole('ROLE_T')" class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/board/tester}" >Tester Board</a>
                 </li>
             </ul>
+            <a  sec:authorize="isAuthenticated()" class="btn btn-danger btn-sm" th:href="@{/logout}" role="button" >Sign out</a>
 
         </div>
     </nav>

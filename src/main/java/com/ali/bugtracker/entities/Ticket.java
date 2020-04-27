@@ -14,7 +14,7 @@ public class Ticket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "ticket_id_seq")
-    private long id;
+    private long ticketId;
 
     @ManyToOne
     @JoinColumn(name="employee_id")
@@ -26,7 +26,7 @@ public class Ticket {
 
     private String name;
     private String description;
-    private LocalDateTime creationDate;
+    private String creationDate;
     private String status; // not started, in progress, submitted for testing, completed
 
     @OneToMany(mappedBy = "ticketId")
@@ -35,7 +35,7 @@ public class Ticket {
     @OneToMany(mappedBy = "ticketId")
     private List<History> histories;
 
-    public Ticket(Employee employeeId, Project projectId, String name, String description, LocalDateTime creationDate, String status) {
+    public Ticket(Employee employeeId, Project projectId, String name, String description, String creationDate, String status) {
         this.employeeId = employeeId;
         this.projectId = projectId;
         this.name = name;

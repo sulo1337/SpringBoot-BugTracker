@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layouts::header">
+    <title>Manager board</title>
+</head>
+<header th:replace="layouts::nav"></header>
+<body>
+<div class="container">
+    <div class="group-form row">
+        <div class="col-md-2">
+        <a th:href="@{/board/manager/projects/new}" class="btn btn-primary btn-sm mb-3"> Create New Project</a>
+        </div>
+    </div>
+    <div class="group-form row">
+        <div class="col-md-6">
+        <table class="table table-sm table-bordered table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th>Project Name</th>
+                <th>Project Stage</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr th:each="project: ${projects}">
+                <td> <a th:text="${project.name}" th:value="${project.projectId}" th:href="@{'/board/manager/project/'+${project.projectId}}"></a></td>
+                <td th:text="${project.status}"></td>
+
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+    <div class="group-form row">
+        <div class="col-md-4">
+            <div th:if="${param.success}" class="alert alert-success">
+                You have successfully added a new project !
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

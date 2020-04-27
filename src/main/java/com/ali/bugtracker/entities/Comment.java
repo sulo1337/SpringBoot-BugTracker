@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "comment_id_seq")
-    private long id;
+    private long commentId;
 
     @ManyToOne
     @JoinColumn(name="employee_id")
@@ -23,9 +23,9 @@ public class Comment {
     private Ticket ticketId;
 
     private String commentText;
-    private LocalDateTime creationDate;
+    private String creationDate;
 
-    public Comment(Employee employeeId, Ticket ticketId, String commentText, LocalDateTime creationDate) {
+    public Comment(Employee employeeId, Ticket ticketId, String commentText, String creationDate) {
         this.employeeId = employeeId;
         this.ticketId = ticketId;
         this.commentText = commentText;

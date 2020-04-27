@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @Controller
 public class SecurityController {
@@ -23,15 +24,22 @@ public class SecurityController {
 
 
     @GetMapping("/login")
-    public  String displaySignIn(){
-        return "/main/sign-in";
+    public  String displaySignIn(Principal principal){
+        if(principal!=null)
+            return "redirect:/";
+        else
+            return "/main/sign-in";
     }
 
     @GetMapping("/register")
-    public String displayRegisterPage(Model model){
+    public String displayRegisterPage(Model model,Principal principal){
+        if(principal!=null)
+            return "redirect:/";
+        else {
         Employee employee =new Employee();
         model.addAttribute("employee",employee);
         return "/main/register";
+        }
     }
 
     @PostMapping("/register/save")

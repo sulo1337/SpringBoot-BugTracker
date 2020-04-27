@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class UniqueValidator implements ConstraintValidator<UniqueEmail,String> {
+public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail,String> {
 
     @Autowired
     EmployeeRepository employeeRepo;
