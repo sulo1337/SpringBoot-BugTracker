@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:replace="layouts::header"></head>
@@ -12,35 +12,39 @@
     <form action="/board/manager/projects/save" th:object="${project}" method="POST">
         <div class="form-group row">
             <div class="col-sm-2">
+                <span class="badge badge-primary" >enter project name</span>
                 <input class="form-control form-control-sm" type="text" placeholder="Project Name" th:field="${project.name}" >
+                <span class="badge badge-danger"  th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</span>
             </div>
-            <label class="alert-link alert-danger"  th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</label>
             <div class="col-sm-4">
+                <span class="badge badge-primary">choose project status</span>
                 <select class="form-control form-control-sm" th:field="${project.status}">
                     <option th:value="NOTSTARTED"> Not Started</option>
                     <option th:value="INPROGRESS"> In Progress</option>
                     <option th:value="COMPLETED"> Completed</option>
                      </select>
+                <span class="badge badge-danger"  th:if="${#fields.hasErrors('status')}" th:errors="*{status}">stage Error</span>
             </div>
-            <label class="alert-link alert-danger"  th:if="${#fields.hasErrors('status')}" th:errors="*{status}">stage Error</label>
         </div>
         <div class="form-group row">
             <div class="col-sm-4">
+                <span class="badge badge-primary">assign employees</span>
                 <select class="form-control form-control-sm" th:field="*{employees}"  multiple="multiple">
                     <option th:each="employee: ${allEmployees}"
                             th:value="${employee.employeeId}"
                             th:text="${employee.firstName}">
                     </option>
                 </select>
+                <span class="badge badge-danger"  th:if="${#fields.hasErrors('employees')}" th:errors="*{employees}">employees Error</span>
             </div>
-            <label class="alert-link alert-danger"  th:if="${#fields.hasErrors('employees')}" th:errors="*{employees}">employees Error</label>
         </div>
 
         <div class="form-group row">
             <div class="col-sm-4">
-        <textarea class="form-control" type="text" placeholder="Enter Project Description" th:field="${project.description}" style="resize: none"></textarea>
+                <span class="badge badge-primary">enter project description</span>
+                <textarea class="form-control" type="text" placeholder="Enter Project Description" th:field="${project.description}" style="resize: none"></textarea>
+                <span class="badge badge-danger"  th:if="${#fields.hasErrors('description')}" th:errors="*{description}">description Error</span>
             </div>
-            <label class="alert-link alert-danger"  th:if="${#fields.hasErrors('description')}" th:errors="*{description}">description Error</label>
         </div>
         <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
         <div class="col-sm-4">

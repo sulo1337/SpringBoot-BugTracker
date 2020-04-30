@@ -15,39 +15,39 @@
             <div class="form-group">
                 <div class="">
                     <input type="text" th:field="*{firstName}" placeholder="First Name" class="form-control" />
-                    <label class="alert-link alert-danger"  th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Name Error</label>
+                    <span class="badge badge-danger"  th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Name Error</span>
 
                 </div>
             </div>
             <div class="form-group">
                 <div class="">
                     <input type="text" th:field="*{lastName}" placeholder="Last Name" class="form-control" />
-                    <label class="alert alert-danger"  th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Name Error</label>
+                    <span class="badge badge-danger"  th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Name Error</span>
 
                 </div>
             </div>
             <div class="form-group">
                 <div class="">
                     <input type="text" th:field="*{email}" placeholder="Email" class="form-control" />
-                    <label class="alert alert-danger"  th:if="${#fields.hasErrors('email')}" th:errors="*{email}">email Error</label>
+                    <span class="badge badge-danger"  th:if="${#fields.hasErrors('email')}" th:errors="*{email}">email Error</span>
                 </div>
             </div>
             <div class="form-group">
                 <div class="">
                     <input type="password" th:field="*{password}" placeholder="Password" class="form-control" />
-                    <label class="alert alert-danger"  th:if="${#fields.hasErrors('password')}" th:errors="*{password}">password Error</label>
+                    <span class="badge badge-danger"  th:if="${#fields.hasErrors('password')}" th:errors="*{password}">password Error</span>
                 </div>
             </div>
             <div class="form-group">
                 <div class="">
                     <div class="col-sm-5 col-md-5">
                         <label>Choose a Role</label>
-                    <select class="form-control" id="sel1" th:field="*{role}" name="roles" size="3">
+                    <select class="form-control form-control-sm" th:field="*{role}" name="roles" >
                         <option th:value="ROLE_M">Project Manager</option>
                         <option th:value="ROLE_P">Programmer</option>
                         <option th:value="ROLE_T">Tester</option>
                     </select>
-                    <label class="alert alert-danger"  th:if="${#fields.hasErrors('role')}" th:errors="*{role}">role Error</label>
+                    <span class="badge badge-danger"  th:if="${#fields.hasErrors('role')}" th:errors="*{role}">role Error</span>
                     </div>
                 </div>
             </div>

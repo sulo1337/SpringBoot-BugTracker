@@ -1,10 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layouts::header">
+    <title>ticket Details</title>
 </head>
+<header th:replace="layouts::nav"></header>
 <body>
-details here
+<div class="container">
+    <h3>Project tickets</h3>
+    <div class="group-form row">
+        <div class="col-md-4">
+            <table class="table table-sm table-dark table-bordered table-striped">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Ticket Name</th>
+                    <th>Ticket Stage</th>
+                    <th>Ticket Priority</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ticket: ${tickets}">
+                    <td> <a class="text-warning" th:text="${ticket.name}" th:value="${ticket.ticketId}"  th:href="@{'/board/manager/projects/tickets/'+${ticket.ticketId}}"></a></td>
+                    <td th:text="${ticket.status}"></td>
+                    <td th:text="${ticket.priority}"></td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-8">
+            <form th:action="'/board/manager/projects/'+${projectId}+'/tickets/save'" th:object="${ticket}" method="POST">
+                <div class="form-group row">
+                    <div class="col-sm-4">
+                        <span class="badge badge-primary" >enter ticket name</span>
+                        <input class="form-control form-control-sm" type="text" placeholder="Ticket Name" th:field="${ticket.name}" >
+                        <span class="badge badge-danger"  th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</span>
+                    </div>
+                    <div class="col-sm-4">
+                        <span class="badge badge-primary" >choose ticket stage</span>
+                        <select class="form-control form-control-sm" th:field="${ticket.status}">
+                            <option th:value="NOTSTARTED"> Not Started</option>
+                            <option th:value="INPROGRESS"> In Progress</option>
+                            <option th:value="COMPLETED"> Completed</option>
+                        </select>
+                        <span class="badge badge-danger"  th:if="${#fields.hasErrors('status')}" th:errors="*{status}">stage Error</span>
+                    </div>
+                    <div class="col-sm-4">
+                        <span class="badge badge-primary" >choose ticket priority</span>
+                        <select class="form-control form-control-sm" th:field="${ticket.priority}">
+                            <option th:value="HIGH"> High</option>
+                            <option th:value="AVERAGE"> Average</option>
+                            <option th:value="LOW"> Low</option>
+                        </select>
+                        <span class="badge badge-danger"  th:if="${#fields.hasErrors('priority')}" th:errors="*{priority}">priority Error</span>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-4">
+                        <span class="badge badge-primary" >choose an employee</span>
+                        <select class="form-control form-control-sm" th:field="*{employeeId}">
+                            <option th:each="employee: ${allEmployees}"
+                                    th:value="${employee.employeeId}"
+                                    th:text="${employee.firstName}">
+                            </option>
+                        </select>
+                        <span class="badge badge-danger"  th:if="${#fields.hasErrors('employeeId')}" th:errors="*{employeeId}">employees Error</span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-4">
+                        <span class="badge badge-primary" >enter ticket description</span>
+                        <textarea class="form-control" type="text" placeholder="Enter Ticket Description" th:field="${ticket.description}" style="resize: none"></textarea>
+                        <span class="badge badge-danger"  th:if="${#fields.hasErrors('description')}" th:errors="*{description}">description Error</span>
+                    </div>
+                </div>
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                <div class="col-sm-4">
+                    <button class="btn btn-success" type="submit">Create Ticket</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="group-form row">
+        <div class="col-md-4">
+            <div th:if="${param.success}" class="alert alert-success">
+                You have successfully added a new ticket !
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

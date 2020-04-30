@@ -12,9 +12,11 @@
         <a th:href="@{/board/manager/projects/new}" class="btn btn-primary btn-sm mb-3"> Create New Project</a>
         </div>
     </div>
+    <!-- all projects table -->
     <div class="group-form row">
         <div class="col-md-6">
-        <table class="table table-sm table-bordered table-striped">
+            <h3 class="text-secondary">here is all your created projects</h3>
+        <table class="table table-sm table-dark table-bordered table-striped">
             <thead class="thead-dark">
             <tr>
                 <th>Project Name</th>
@@ -23,12 +25,33 @@
             </thead>
             <tbody>
                 <tr th:each="project: ${projects}">
-                <td> <a th:text="${project.name}" th:value="${project.projectId}" th:href="@{'/board/manager/project/'+${project.projectId}}"></a></td>
+                <td> <a class="text-warning" th:text="${project.name}" th:value="${project.projectId}" th:href="@{'/board/manager/projects/'+${project.projectId}}"></a></td>
                 <td th:text="${project.status}"></td>
 
                 </tr>
             </tbody>
         </table>
+        </div>
+        <!-- all tickets table -->
+        <div class="col-md-6">
+            <h3 class="text-secondary">here is all your created tickets</h3>
+            <table class="table table-sm table-dark table-bordered table-striped">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Ticket Name</th>
+                    <th>Ticket Stage</th>
+                    <th>Ticket Priority</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ticket: ${tickets}">
+                    <td> <a class="text-warning" th:text="${ticket.name}" th:value="${ticket.ticketId}"  th:href="@{'/board/manager/projects/tickets/'+${ticket.ticketId}}"></a></td>
+                    <td th:text="${ticket.status}"></td>
+                    <td th:text="${ticket.priority}"></td>
+
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
     <div class="group-form row">
