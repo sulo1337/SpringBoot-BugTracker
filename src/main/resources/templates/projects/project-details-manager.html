@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="layouts::header">
-    <title>ticket Details</title>
+    <title>project Details</title>
 </head>
 <header th:replace="layouts::nav"></header>
 <body>
@@ -20,7 +20,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="ticket: ${tickets}">
-                    <td> <a class="text-warning" th:text="${ticket.name}" th:value="${ticket.ticketId}"  th:href="@{'/board/manager/projects/tickets/'+${ticket.ticketId}}"></a></td>
+                    <td> <a class="text-warning" th:text="${ticket.name}" th:value="${ticket.ticketId}"  th:href="@{'/board/manager/projects/'+${projectId}+'/tickets/'+${ticket.ticketId}}"></a></td>
                     <td th:text="${ticket.status}"></td>
                     <td th:text="${ticket.priority}"></td>
 

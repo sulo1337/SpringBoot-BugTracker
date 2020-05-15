@@ -13,7 +13,7 @@
         <div class="form-group row">
             <div class="col-sm-2">
                 <span class="badge badge-primary" >enter project name</span>
-                <input class="form-control form-control-sm" type="text" placeholder="Project Name" th:field="${project.name}" >
+                <input  class="form-control form-control-sm" type="text" placeholder="Project Name" th:field="${project.name}" >
                 <span class="badge badge-danger"  th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</span>
             </div>
             <div class="col-sm-4">
@@ -29,7 +29,7 @@
         <div class="form-group row">
             <div class="col-sm-4">
                 <span class="badge badge-primary">assign employees</span>
-                <select class="form-control form-control-sm" th:field="*{employees}"  multiple="multiple">
+                <select class="form-control form-control-sm" th:field="*{employees}" onchange="getJob()"   multiple="multiple">
                     <option th:each="employee: ${allEmployees}"
                             th:value="${employee.employeeId}"
                             th:text="${employee.firstName}">
@@ -38,7 +38,9 @@
                 <span class="badge badge-danger"  th:if="${#fields.hasErrors('employees')}" th:errors="*{employees}">employees Error</span>
             </div>
         </div>
+        <div id="resultsBlock">
 
+        </div>
         <div class="form-group row">
             <div class="col-sm-4">
                 <span class="badge badge-primary">enter project description</span>
@@ -51,6 +53,8 @@
             <button class="btn btn-success" type="submit">Create Project</button>
         </div>
     </form>
+    <script type="text/javascript" th:src="@{/js/AjaxRequests.js}" ></script>
+
 
 </div>
 

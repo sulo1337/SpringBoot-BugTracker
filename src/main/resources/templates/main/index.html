@@ -6,18 +6,21 @@
 <body>
 <!-- Page content goes here -->
 <div class="container">
-    <div  class="jumbotron">
+    <!-- unknown  user home page-->
+    <div sec:authorize="isAnonymous()"  class="jumbotron">
         <h1 class="display-4">Hello, Welcome to My BugTracker!</h1>
         <p class="lead">This is the home page of our web application. Anyone can access it, even if they have not signed in.</p>
         <hr class="my-4">
         <p>Using this Bug Tracker, you will be able to manage your future projects more efficiently </p>
         <p class="lead">
-            <a  sec:authorize="isAnonymous()" class="btn btn-primary btn-lg" th:href="@{/login}" role="button" >Lets Get Started !!!</a>
+            <a class="btn btn-primary btn-lg" th:href="@{/login}" role="button" >Lets Get Started !!!</a>
         </p>
     </div>
     <div th:if="${param.logout}" class="alert alert-success">
         You have been logged out.
     </div>
+    <!-- signed user home page-->
+
 </div>
 </body>
 </html>

@@ -15,7 +15,7 @@ import java.util.List;
 public class Ticket {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "ticket_id_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long ticketId;
 
     @ManyToOne

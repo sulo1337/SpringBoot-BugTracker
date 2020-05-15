@@ -16,7 +16,7 @@ import java.util.List;
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "employee_id_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long employeeId;
     @NotBlank(message = "first name cannot be empty")
     private String firstName;

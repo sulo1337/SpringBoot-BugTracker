@@ -1,9 +1,11 @@
 package com.ali.bugtracker.controllers;
 
 
+import com.ali.bugtracker.entities.Comment;
 import com.ali.bugtracker.entities.Employee;
 import com.ali.bugtracker.entities.Project;
 import com.ali.bugtracker.entities.Ticket;
+import com.ali.bugtracker.repositories.CommentRepository;
 import com.ali.bugtracker.repositories.EmployeeRepository;
 import com.ali.bugtracker.repositories.ProjectRepository;
 import com.ali.bugtracker.repositories.TicketRepository;
@@ -34,7 +36,8 @@ public class ManagerController {
     ProjectRepository projectRepo;
     @Autowired
     TicketRepository ticketRepo;
-
+    @Autowired
+    CommentRepository commentRepo;
     //display main board for current manager
     @GetMapping()
     public String displayManagerBoard(Model model,Principal principal){
@@ -90,7 +93,7 @@ public class ManagerController {
                     allEmployees.add(employeeRepo.findByEmployeeId(employeesId));
                 }
                 model.addAttribute("allEmployees",allEmployees);
-                return "/projects/project-details";
+                return "projects/project-details-manager";
             }
             else return "redirect:/board/manager";
         }
@@ -110,7 +113,7 @@ public class ManagerController {
                allEmployees.add(employeeRepo.findByEmployeeId(employeesId));
            }
            model.addAttribute("allEmployees",allEmployees);
-           return "/projects/project-details";
+           return "/projects/project-details-manager";
        }
        else {
            Employee currentManager = employeeRepo.findByEmail(principal.getName());
@@ -124,10 +127,21 @@ public class ManagerController {
 
     }
     // display the details of each ticket
-    @GetMapping("/projects/tickets/{ticketId}")
-    public String displayTicketDetails(@PathVariable Long ticketId){
+    @GetMapping("/projects/{projectId}/tickets/{ticketId}")
+    public String displayTicketDetails(@PathVariable Long projectId,@PathVariable Long ticketId,Model model){
+        Ticket ticket=ticketRepo.findTicketByTicketId(ticketId);
+        Employee employee=ticket.getEmployeeId();
+        String ticketAssignedTo=employee.getFirstName()+" "+employee.getLastName();
+        List<Comment> comments=commentRepo.findAllByTicketId(ticket);
+        model.addAttribute("ticket",ticket);
+        model.addAttribute("ticketAssignedTo",ticketAssignedTo);
+        model.addAttribute("comments",comments);
         return "projects/ticket-details";
     }
-
+    @GetMapping("/job")
+    public String getEmployeeName(Principal principal,Model model){
+        model.addAttribute("TheName",principal.getName());
+        return "projects/test :: test";
+    }
 }
 

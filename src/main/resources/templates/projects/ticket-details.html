@@ -1,10 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layouts::header">
+    <title>ticket Details</title>
+    <header th:replace="layouts::nav"></header>
 <body>
-here is ticket details
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div th:object="${ticket}" class="card text-white bg-dark mb-3" >
+                <div class="card-header bg-transparent border-success">
+                    <h3 class="text-white" th:text="${ticket.name}"></h3>
+                </div>
+                <div class="card-body text-success">
+                <h5 class="card-title" th:text="${ticket.status}"></h5>
+                <p class="card-text" th:text="${ticket.description}"></p>
+                </div>
+                <div class="card-footer bg-transparent border-success" >
+                    <h6 sec:authorize="hasRole('ROLE_M')" class="text-secondary" >Assigned to </h6>
+                    <h6 sec:authorize="hasRole('ROLE_M')" class="text-success" th:text="${ticketAssignedTo}"></h6>
+                    <h6 sec:authorize="hasAnyRole('ROLE_P','ROLE_T')" class="text-secondary" >Created By </h6>
+                    <h6 sec:authorize="hasAnyRole('ROLE_P','ROLE_T')" class="text-success" th:text="${ticketCreatedBy}"></h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <table class="table table-sm table-dark table-bordered table-striped">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Comments</th>
+                    <th>Comments Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="comment: ${comments}">
+                    <td th:text="${comment.commentText}"></td>
+                    <td th:text="${comment.creationDate}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div sec:authorize="hasRole('ROLE_P')" >
+        <span class="badge badge-warning" >Leave a comment ?</span>
+        <div class="col-md-6" th:object="${comment}">
+            <form th:action="@{${ticket.ticketId}+'/comments/save'}"  method="post" class="form-inline">
+                <textarea th:field="${comment.commentText}" class="form-control" placeholder="Enter your comment here " style="resize: none"></textarea>
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                <div class="col-sm-1">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+        <div th:if="${param.success}" class="alert alert-success">
+            You comment has been submitted !
+        </div>
+        <div th:if="${param.error}" class="alert alert-danger">
+            write your comment first !
+        </div>
+
+    </div>
+</div>
 </body>
 </html>

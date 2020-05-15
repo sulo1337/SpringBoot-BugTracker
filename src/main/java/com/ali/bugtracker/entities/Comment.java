@@ -5,13 +5,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter @NoArgsConstructor
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "comment_id_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long commentId;
 
     @ManyToOne
@@ -21,7 +22,7 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "ticket_id")
     private Ticket ticketId;
-
+    @NotEmpty(message = "write your comment first")
     private String commentText;
     private String creationDate;
 
