@@ -37,15 +37,6 @@
                         <span class="badge badge-danger"  th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</span>
                     </div>
                     <div class="col-sm-4">
-                        <span class="badge badge-primary" >choose ticket stage</span>
-                        <select class="form-control form-control-sm" th:field="${ticket.status}">
-                            <option th:value="NOTSTARTED"> Not Started</option>
-                            <option th:value="INPROGRESS"> In Progress</option>
-                            <option th:value="COMPLETED"> Completed</option>
-                        </select>
-                        <span class="badge badge-danger"  th:if="${#fields.hasErrors('status')}" th:errors="*{status}">stage Error</span>
-                    </div>
-                    <div class="col-sm-4">
                         <span class="badge badge-primary" >choose ticket priority</span>
                         <select class="form-control form-control-sm" th:field="${ticket.priority}">
                             <option th:value="HIGH"> High</option>
@@ -58,7 +49,7 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-4">
-                        <span class="badge badge-primary" >choose an employee</span>
+                        <span class="badge badge-primary" >choose a programmer</span>
                         <select class="form-control form-control-sm" th:field="*{employeeId}">
                             <option th:each="employee: ${allEmployees}"
                                     th:value="${employee.employeeId}"
@@ -87,6 +78,28 @@
         <div class="col-md-4">
             <div th:if="${param.success}" class="alert alert-success">
                 You have successfully added a new ticket !
+            </div>
+
+        </div>
+    </div>
+
+    <div th:object="${project}" class="container" style="margin-top: 5%; margin-bottom: 5%">
+        <div class="row bg-dark" style="min-height:100px;text-align:center; align-items: center;">
+            <div th:if="${project.status=='NOT STARTED'}" class="col-md-3">
+                <h6 class="text-white">Project Not started yet !</h6>
+                    <a th:href="@{/board/manager/projects/start(prId=${projectId})}" onclick="if (!(confirm('start the project ?'))) return false" class="btn btn-success">Start the Project !</a>
+            </div>
+            <div th:unless="${project.status=='NOT STARTED'}" class="col-md-3">
+                <h6 class="text-white">Project Status : </h6>
+                <h6 class="text-success" th:text="${project.status}"></h6>
+            </div>
+            <div class="col-md-3">
+                <h6 class="text-white">Project created : </h6>
+                <h6 class="text-success" th:text="${project.creationDate}"></h6>
+            </div>
+            <div class="col-md-3">
+                <h6 class="text-white">Number of uncompleted tickets : </h6>
+                <h6 class="text-success" th:text="${uncompletedTickets.size()}"></h6>
             </div>
         </div>
     </div>

@@ -14,28 +14,32 @@
     </div>
     <!-- all projects table -->
     <div class="group-form row">
-        <div class="col-md-6">
-            <h3 class="text-secondary">here is all your created projects</h3>
-        <table class="table table-sm table-dark table-bordered table-striped">
-            <thead class="thead-dark">
-            <tr>
-                <th>Project Name</th>
-                <th>Project Stage</th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr th:each="project: ${projects}">
-                <td> <a class="text-warning" th:text="${project.name}" th:value="${project.projectId}" th:href="@{'/board/manager/projects/'+${project.projectId}}"></a></td>
-                <td th:text="${project.status}"></td>
-
+        <div class="col-md-12">
+            <h3 class="text-dark">here is all your created projects</h3>
+            <table class="table table-sm table-dark table-bordered table-striped">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Project Name</th>
+                    <th>Project Stage</th>
+                    <th>Assigned Employees</th>
+                    <th>Uncompleted Tickets</th>
+                    <th>Actions</th>
                 </tr>
-            </tbody>
-        </table>
-        </div>
-        <!-- all tickets table -->
-        <div class="col-md-6">
-          <!--  <h3 class="text-secondary">here is all your created tickets</h3> -->
-
+                </thead>
+                <tbody>
+                <tr th:each="project: ${projects}">
+                    <td>
+                        <a class="text-warning" th:text="${project.name}" th:value="${project.projectId}" th:href="@{'/board/manager/projects/'+${project.projectId}}"></a></td>
+                    <td th:text="${project.status}"></td>
+                    <td>Assigned Employees</td>
+                    <td>Uncompleted Tickets</td>
+                    <td>
+                        <a th:href="@{/board/manager/projects/update(prId=${project.projectId})}" class="btn btn-secondary btn-sm">UPDATE</a>
+                        <a th:href="@{/board/manager/projects/delete(prId=${project.projectId})}" onclick="if (!(confirm('Are you sure you want to delete ?'))) return false" class="btn btn-danger btn-sm">DELETE</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
     <div class="group-form row">
@@ -43,9 +47,11 @@
             <div th:if="${param.success}" class="alert alert-success">
                 You have successfully added a new project !
             </div>
+            <div th:if="${param.error}" class="alert alert-danger">
+                Error, Something went wrong !
+            </div>
         </div>
     </div>
 </div>
-
 </body>
 </html>

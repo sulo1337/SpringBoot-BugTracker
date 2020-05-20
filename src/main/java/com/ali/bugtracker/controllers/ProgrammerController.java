@@ -1,22 +1,14 @@
 package com.ali.bugtracker.controllers;
 
 
-import com.ali.bugtracker.entities.Comment;
-import com.ali.bugtracker.entities.Employee;
-import com.ali.bugtracker.entities.Project;
-import com.ali.bugtracker.entities.Ticket;
-import com.ali.bugtracker.repositories.CommentRepository;
-import com.ali.bugtracker.repositories.EmployeeRepository;
-import com.ali.bugtracker.repositories.ProjectRepository;
-import com.ali.bugtracker.repositories.TicketRepository;
+import com.ali.bugtracker.entities.*;
+import com.ali.bugtracker.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -42,18 +34,19 @@ public class ProgrammerController {
     TicketRepository ticketRepo;
     @Autowired
     CommentRepository commentRepo;
+    @Autowired
+    HistoryRepository historyRepo;
+
     //display programmer board
     @GetMapping()
     public String displayProgrammerBoard(Model model, Principal principal){
         Employee currentProgrammer=employeeRepo.findByEmail(principal.getName());
         HashMap<Long, Long> ticketsCount = new HashMap<Long,Long>();
-        List<Long> projectIds= projectRepo.findAllByEmployeeId(currentProgrammer.getEmployeeId());
-        List<Project> allProjects=new ArrayList<>();
-        for(Long projectId : projectIds){
-            allProjects.add(projectRepo.findByProjectId(projectId));
-            ticketsCount.put(projectId,
-                    ticketRepo.countTicketsByProjectIdAndEmployeeId(projectRepo.findByProjectId(projectId),
-                            currentProgrammer));
+        List<Project> allProjects=currentProgrammer.getProjects();
+       // get tickets count for the programmer in  each project
+        for(Project project : allProjects){
+            ticketsCount.put(project.getProjectId(),
+                    ticketRepo.countTicketsByProjectIdAndEmployeeId(project,currentProgrammer));
 
         }
         model.addAttribute("currentProgrammer",currentProgrammer);
@@ -66,7 +59,14 @@ public class ProgrammerController {
     public String displayProjectDetails(@PathVariable Long projectId,Principal principal,Model model){
         Project project=projectRepo.findByProjectId(projectId);
         Employee currentEmployee=employeeRepo.findByEmail(principal.getName());
-        List<Ticket> tickets=ticketRepo.findAllByEmployeeIdAndProjectId(currentEmployee,project);
+        // all project tickets
+        List<Ticket> allTickets=project.getTickets();
+        //only current user tickets
+        List<Ticket> tickets =new ArrayList<>();
+        for(Ticket ticket:allTickets){
+            if(ticket.getEmployeeId().equals(currentEmployee))
+                tickets.add(ticket);
+        }
         Employee owner=project.getOwner();
         String ownerName=owner.getFirstName()+" "+owner.getLastName();
         model.addAttribute("ownerName",ownerName);
@@ -78,11 +78,26 @@ public class ProgrammerController {
     @GetMapping("/projects/{projectId}/tickets/{ticketId}")
     public String displayTicketDetails(@PathVariable Long projectId,@PathVariable Long ticketId,Model model ){
        Ticket ticket= ticketRepo.findTicketByTicketId(ticketId);
+       Project project=ticket.getProjectId();
+       List<History> histories=ticket.getHistories();
+       String startingDate="",submissionDate="";
+       for (History history: histories ){
+           if (history.getEvent().equals("STARTED")){
+               startingDate=history.getModificationDate();
+           }
+           if(history.getEvent().equals("SUBMITTED FOR TESTING")){
+               submissionDate=history.getModificationDate();
+           }
+       }
+           model.addAttribute("startingDate",startingDate);
+           model.addAttribute("submissionDate",submissionDate);
+
        Comment comment=new Comment();
        Employee employee=ticket.getOwner();
        String ownerName=employee.getFirstName()+" "+employee.getLastName();
-       List<Comment> comments=commentRepo.findAllByTicketId(ticket);
+       List<Comment> comments=ticket.getComments();
        model.addAttribute("ticket",ticket);
+       model.addAttribute("project",project);
        model.addAttribute("ticketCreatedBy",ownerName);
        model.addAttribute("comments",comments);
        model.addAttribute("comment",comment);
@@ -104,6 +119,40 @@ public class ProgrammerController {
         commentRepo.save(comment);
         return "redirect:/board/programmer/projects/{projectId}/tickets/{ticketId}?success";
        }
+    }
+
+    // start a  ticket
+    @PostMapping("/projects/{projectId}/tickets/{ticketId}/start")
+    public String startTicket(@PathVariable Long projectId,@PathVariable Long ticketId,Principal principal){
+        Employee currentProgrammer=employeeRepo.findByEmail(principal.getName());
+        Ticket ticket=ticketRepo.findTicketByTicketId(ticketId);
+        ticket.setStatus("IN PROGRESS");
+        // history fields
+        History history=new History();
+        history.setTicketId(ticket);
+        history.setEmployeeId(currentProgrammer);
+        history.setEvent("STARTED");
+        history.setModificationDate(date);
+        // save changes
+        ticketRepo.save(ticket);
+        historyRepo.save(history);
+        return "redirect:/board/programmer/projects/{projectId}/tickets/{ticketId}";
+    }
+    @PostMapping("/projects/{projectId}/tickets/{ticketId}/submitToTest")
+    public String submitToTest(@PathVariable Long projectId,@PathVariable Long ticketId,Principal principal){
+        Employee currentProgrammer=employeeRepo.findByEmail(principal.getName());
+        Ticket ticket=ticketRepo.findTicketByTicketId(ticketId);
+        ticket.setStatus("SUBMITTED FOR TESTING");
+        // history fields
+        History history=new History();
+        history.setTicketId(ticket);
+        history.setEmployeeId(currentProgrammer);
+        history.setEvent("SUBMITTED FOR TESTING");
+        history.setModificationDate(date);
+        // save changes
+        ticketRepo.save(ticket);
+        historyRepo.save(history);
+        return "redirect:/board/programmer/projects/{projectId}/tickets/{ticketId}";
     }
 
 }

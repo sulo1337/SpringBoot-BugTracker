@@ -36,7 +36,6 @@ public class Ticket {
     private String description;
     private String creationDate;
 
-    @NotBlank(message = "Choose a stage")
     private String status; // not started, in progress, submitted for testing, completed
     @NotBlank(message = "Choose a priority")
     private String priority; // high, average, low

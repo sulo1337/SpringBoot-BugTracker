@@ -32,7 +32,6 @@ public class Project {
     @NotBlank(message = "description is empty")
     private String description;
     private String creationDate;
-    @NotBlank(message = "Choose a stage")
     private String status;// not started, in progress , completed
 
     @NotNull

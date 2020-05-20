@@ -21,14 +21,13 @@ public class History {
     @ManyToOne
     @JoinColumn(name = "ticket_id")
     private Ticket ticketId;
-
-    private String oldStatus;
+    private String event;
     private String modificationDate;
 
-    public History(Employee employeeId, Ticket ticketId, String oldStatus, String modificationDate) {
+    public History(Employee employeeId, Ticket ticketId, String event, String modificationDate) {
         this.employeeId = employeeId;
         this.ticketId = ticketId;
-        this.oldStatus = oldStatus;
+        this.event = event;
         this.modificationDate = modificationDate;
     }
 }

@@ -1,14 +1,8 @@
 package com.ali.bugtracker.controllers;
 
 
-import com.ali.bugtracker.entities.Comment;
-import com.ali.bugtracker.entities.Employee;
-import com.ali.bugtracker.entities.Project;
-import com.ali.bugtracker.entities.Ticket;
-import com.ali.bugtracker.repositories.CommentRepository;
-import com.ali.bugtracker.repositories.EmployeeRepository;
-import com.ali.bugtracker.repositories.ProjectRepository;
-import com.ali.bugtracker.repositories.TicketRepository;
+import com.ali.bugtracker.entities.*;
+import com.ali.bugtracker.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Controller;
@@ -38,14 +32,14 @@ public class ManagerController {
     TicketRepository ticketRepo;
     @Autowired
     CommentRepository commentRepo;
+    @Autowired
+    HistoryRepository historyRepo;
     //display main board for current manager
     @GetMapping()
     public String displayManagerBoard(Model model,Principal principal){
         Employee currentManager=employeeRepo.findByEmail(principal.getName());
         List<Project> projects= projectRepo.findAllByOwner(currentManager);
         model.addAttribute("projects",projects);
-        List<Ticket> tickets=ticketRepo.findAllByOwner(currentManager);
-        model.addAttribute("tickets",tickets);
         return "boards/manager-board";
     }
 
@@ -68,8 +62,9 @@ public class ManagerController {
             return "/projects/new-project";
         }
         else {
-        Employee owner= employeeRepo.findByEmail(principal.getName());
+            Employee owner= employeeRepo.findByEmail(principal.getName());
             project.setOwner(owner);
+            project.setStatus("NOT STARTED");
             project.setCreationDate(date);
             projectRepo.save(project);
             return "redirect:/board/manager?success";
@@ -83,45 +78,51 @@ public class ManagerController {
             Employee managerOfThisProject=project.getOwner();
             Employee currentManager=employeeRepo.findByEmail(principal.getName());
             if(managerOfThisProject.getEmployeeId()==currentManager.getEmployeeId()){
-                List<Ticket> tickets=ticketRepo.findAllByProjectId(project);
+                model.addAttribute("project",project);
+                List<Ticket> tickets=project.getTickets();
                 model.addAttribute("tickets",tickets);
+                List<Ticket>uncompletedTickets=new ArrayList<>();
+                for(Ticket ticket:tickets){
+                    if (!ticket.getStatus().equals("COMPLETED"))
+                        uncompletedTickets.add(ticket);
+                }
                 Ticket ticket =new Ticket();
                 model.addAttribute("ticket",ticket);
-                List<Employee> allEmployees=new ArrayList<>();
-                List<Long>employeesIds=employeeRepo.findAllByProjectId(projectId);
-                for (Long employeesId : employeesIds) {
-                    allEmployees.add(employeeRepo.findByEmployeeId(employeesId));
-                }
+                List<Employee> allEmployees=project.getEmployees();
                 model.addAttribute("allEmployees",allEmployees);
+                model.addAttribute("uncompletedTickets",uncompletedTickets);
                 return "projects/project-details-manager";
             }
             else return "redirect:/board/manager";
         }
-
         else return "redirect:/board/manager";
     }
     // save a new ticket to a project
     @PostMapping("/projects/{projectId}/tickets/save")
     public String saveTicket(@PathVariable Long projectId, @Valid Ticket ticket, BindingResult bindingResult,Principal principal,Model model){
-       if (bindingResult.hasErrors()){
-           Project project= projectRepo.findByProjectId(projectId);
-           List<Ticket> tickets=ticketRepo.findAllByProjectId(project);
+        Project project= projectRepo.findByProjectId(projectId);
+        if (bindingResult.hasErrors()){
+           List<Ticket> tickets=project.getTickets();
            model.addAttribute("tickets",tickets);
-           List<Employee> allEmployees=new ArrayList<>();
-           List<Long>employeesIds=employeeRepo.findAllByProjectId(projectId);
-           for (Long employeesId : employeesIds) {
-               allEmployees.add(employeeRepo.findByEmployeeId(employeesId));
-           }
+           List<Employee> allEmployees=project.getEmployees();
            model.addAttribute("allEmployees",allEmployees);
            return "/projects/project-details-manager";
        }
        else {
            Employee currentManager = employeeRepo.findByEmail(principal.getName());
-           Project project = projectRepo.findByProjectId(projectId);
+           // ticket fields
            ticket.setOwner(currentManager);
+           ticket.setStatus("NOT STARTED");
            ticket.setProjectId(project);
            ticket.setCreationDate(date);
+           // history fields
+           History history=new History();
+           history.setEmployeeId(currentManager);
+           history.setTicketId(ticket);
+           history.setModificationDate(date);
+           history.setEvent("CREATED");
            ticketRepo.save(ticket);
+           historyRepo.save(history);
            return "redirect:/board/manager/projects/{projectId}?success";
        }
 
@@ -132,12 +133,38 @@ public class ManagerController {
         Ticket ticket=ticketRepo.findTicketByTicketId(ticketId);
         Employee employee=ticket.getEmployeeId();
         String ticketAssignedTo=employee.getFirstName()+" "+employee.getLastName();
-        List<Comment> comments=commentRepo.findAllByTicketId(ticket);
+        List<Comment> comments=ticket.getComments();
         model.addAttribute("ticket",ticket);
         model.addAttribute("ticketAssignedTo",ticketAssignedTo);
         model.addAttribute("comments",comments);
         return "projects/ticket-details";
     }
+
+    // start a project
+    @GetMapping("/projects/start")
+    public String startProject(@RequestParam("prId") Long projectId){
+        Project project=projectRepo.findByProjectId(projectId);
+        project.setStatus("IN PROGRESS");
+        projectRepo.save(project);
+        return "redirect:/board/manager/projects/"+projectId;
+    }
+    // edit project details
+    @GetMapping("/projects/delete")
+    public String editProject(@RequestParam("prId") Long projectId,Principal principal){
+        Project project=projectRepo.findByProjectId(projectId);
+        // prevent manager from deleting other managers projects
+        Employee projectOwner=project.getOwner();
+        Employee currentManager=employeeRepo.findByEmail(principal.getName());
+        if (projectOwner!=currentManager){
+            return "redirect:/board/manager?error";
+        }
+        else {
+            projectRepo.delete(project);
+            return "redirect:/board/manager";
+        }
+    }
+
+    // ajax test
     @GetMapping("/job")
     public String getEmployeeName(Principal principal,Model model){
         model.addAttribute("TheName",principal.getName());
