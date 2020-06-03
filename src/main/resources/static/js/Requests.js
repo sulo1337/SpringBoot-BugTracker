@@ -14,3 +14,9 @@ function confirmStart(Form) {
     }
     return false;
 }
+function assign(empId) {
+    var id= empId;
+    alert(empId);
+    var url = '/board/manager/projects/new/assign/'+empId;
+    $("#results-assigned").load(url);
+}

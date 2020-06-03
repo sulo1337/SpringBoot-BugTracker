@@ -34,8 +34,8 @@
                     <td>Assigned Employees</td>
                     <td>Uncompleted Tickets</td>
                     <td>
-                        <a th:href="@{/board/manager/projects/update(prId=${project.projectId})}" class="btn btn-secondary btn-sm">UPDATE</a>
-                        <a th:href="@{/board/manager/projects/delete(prId=${project.projectId})}" onclick="if (!(confirm('Are you sure you want to delete ?'))) return false" class="btn btn-danger btn-sm">DELETE</a>
+                        <a th:href="@{/board/manager/projects/update(prId=${project.projectId})}" class="btn btn-secondary btn-sm"><i class="fas fa-edit"></i></a>
+                        <a th:href="@{/board/manager/projects/delete(prId=${project.projectId})}" onclick="if (!(confirm('Are you sure you want to delete ?'))) return false" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a>
                     </td>
                 </tr>
                 </tbody>
@@ -45,7 +45,7 @@
     <div class="group-form row">
         <div class="col-md-4">
             <div th:if="${param.success}" class="alert alert-success">
-                You have successfully added a new project !
+                Submission Completed Successfully !
             </div>
             <div th:if="${param.error}" class="alert alert-danger">
                 Error, Something went wrong !

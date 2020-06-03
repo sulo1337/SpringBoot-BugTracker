@@ -16,7 +16,7 @@ import java.util.List;
 
 @Entity
 @Getter @Setter @NoArgsConstructor
-public class Project {
+public class Project extends Auditable<Project> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,11 +27,10 @@ public class Project {
     private Employee owner;
 
     @NotBlank(message = "name is empty")
-    @UniqueProject
     private String name;
     @NotBlank(message = "description is empty")
     private String description;
-    private String creationDate;
+   // private String creationDate;
     private String status;// not started, in progress , completed
 
     @NotNull
@@ -46,20 +45,11 @@ public class Project {
     @OneToMany(mappedBy = "projectId")
     private List<Ticket> tickets;
 
-    public Project(Employee owner, String name, String description, String creationDate, String status) {
+    public Project(Employee owner, String name, String description, String status) {
         this.owner = owner;
         this.name = name;
         this.description = description;
-        this.creationDate = creationDate;
+      //  this.creationDate = creationDate;
         this.status = status;
     }
 }
-
-/*
-            ///////////////how to do the date for later work ////////
-    void test() {
-
-        System.out.println(dtf.format(now));
-    }
-
- */

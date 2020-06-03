@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter @Setter @NoArgsConstructor
-public class Ticket {
+public class Ticket extends Auditable<Ticket> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class Ticket {
     private String name;
     @NotBlank(message = "description is empty")
     private String description;
-    private String creationDate;
+   // private String creationDate;
 
     private String status; // not started, in progress, submitted for testing, completed
     @NotBlank(message = "Choose a priority")
@@ -46,12 +46,12 @@ public class Ticket {
     @OneToMany(mappedBy = "ticketId")
     private List<History> histories;
 
-    public Ticket(Employee employeeId, Project projectId, String name, String description, String creationDate, String status, String priority) {
+    public Ticket(Employee employeeId, Project projectId, String name, String description, String status, String priority) {
         this.employeeId = employeeId;
         this.projectId = projectId;
         this.name = name;
         this.description = description;
-        this.creationDate = creationDate;
+   //     this.creationDate = creationDate;
         this.status = status;
         this.priority=priority;
     }

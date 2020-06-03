@@ -2,6 +2,7 @@ package com.ali.bugtracker.controllers;
 
 import com.ali.bugtracker.entities.Employee;
 import com.ali.bugtracker.repositories.EmployeeRepository;
+import com.ali.bugtracker.services.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -17,7 +18,7 @@ import java.security.Principal;
 public class SecurityController {
 
     @Autowired
-    EmployeeRepository employeeRepo;
+    EmployeeService employeeService;
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -49,7 +50,7 @@ public class SecurityController {
         }
         else {
             employee.setPassword(bCryptPasswordEncoder.encode(employee.getPassword()));
-            employeeRepo.save(employee);
+            employeeService.save(employee);
             return "redirect:/register?success";
         }
     }

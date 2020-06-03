@@ -8,19 +8,20 @@
 <div class="container">
     <div class="row">
         <div class="col-md-4">
-            <div th:object="${ticket}" class="card text-white bg-dark mb-3" >
+            <div th:object="${ticket}" class="card text-white bg-dark mb-3">
                 <div class="card-header bg-transparent border-success">
                     <h3 class="text-white" th:text="${ticket.name}"></h3>
                 </div>
                 <div class="card-body text-success">
-                <h5 class="card-title" th:text="${ticket.status}"></h5>
-                <p class="card-text" th:text="${ticket.description}"></p>
+                    <h5 class="card-title" th:text="${ticket.status}"></h5>
+                    <p class="card-text" th:text="${ticket.description}"></p>
                 </div>
-                <div class="card-footer bg-transparent border-success" >
-                    <h6 sec:authorize="hasRole('ROLE_M')" class="text-secondary" >Assigned to </h6>
+                <div class="card-footer bg-transparent border-success">
+                    <h6 sec:authorize="hasRole('ROLE_M')" class="text-secondary">Assigned to </h6>
                     <h6 sec:authorize="hasRole('ROLE_M')" class="text-success" th:text="${ticketAssignedTo}"></h6>
-                    <h6 sec:authorize="hasAnyRole('ROLE_P','ROLE_T')" class="text-secondary" >Created By </h6>
-                    <h6 sec:authorize="hasAnyRole('ROLE_P','ROLE_T')" class="text-success" th:text="${ticketCreatedBy}"></h6>
+                    <h6 sec:authorize="hasAnyRole('ROLE_P','ROLE_T')" class="text-secondary">Created By </h6>
+                    <h6 sec:authorize="hasAnyRole('ROLE_P','ROLE_T')" class="text-success"
+                        th:text="${ticketCreatedBy}"></h6>
                 </div>
             </div>
         </div>
@@ -43,45 +44,47 @@
     </div>
     <div class="row">
         <div class="col-md-4">
-        <div sec:authorize="hasRole('ROLE_P')" >
-            <span class="badge badge-warning" >Leave a comment ?</span>
-            <div th:object="${comment}">
-                <form th:action="@{${ticket.ticketId}+'/comments/save'}"  method="post" >
-                    <textarea th:field="${comment.commentText}" class="form-control" placeholder="Enter your comment here " style="resize: none"></textarea>
-                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                    <button type="submit" class="btn btn-primary" style="margin-top: 5%">Submit</button>
-                </form>
-            </div>
-            <div th:if="${param.success}" class="alert alert-success">
-                You comment has been submitted !
-            </div>
-            <div th:if="${param.error}" class="alert alert-danger">
-                write your comment first !
+            <div sec:authorize="hasRole('ROLE_P')">
+                <span class="badge badge-warning">Leave a comment ?</span>
+                <div th:object="${comment}">
+                    <form th:action="@{${ticket.ticketId}+'/comments/save'}" method="post">
+                        <textarea th:field="${comment.commentText}" class="form-control"
+                                  placeholder="Enter your comment here " style="resize: none"></textarea>
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 5%">Submit</button>
+                    </form>
+                </div>
+                <div th:if="${param.success}" class="alert alert-success">
+                    You comment has been submitted !
+                </div>
+                <div th:if="${param.error}" class="alert alert-danger">
+                    write your comment first !
+                </div>
             </div>
         </div>
     </div>
-    </div>
-    <div th:if="${project.status!='NOT STARTED'}"  sec:authorize="hasRole('ROLE_P')" th:object="${ticket}" class="container" style="margin-top: 5%; margin-bottom: 5%">
+    <div th:if="${project.status!='NOT STARTED'}" sec:authorize="hasRole('ROLE_P')" th:object="${ticket}"
+         class="container" style="margin-top: 5%; margin-bottom: 5%">
         <div class="row bg-dark" style="min-height:100px;text-align:center; align-items: center;">
-            <div th:if="${ticket.status=='NOT STARTED'}" class="col-md-3" >
-                <h5 class="text-primary" >Launch your ticket ?</h5>
-                <form th:action="@{'/board/programmer/projects/'+${projectId}+'/tickets/'+${ticketId}+'/start'}" method="post">
-                    <button type="submit" class="btn btn-primary">Start</button>
-                </form>
+            <div th:if="${ticket.status=='NOT STARTED'}" class="col-md-3">
+                <h5 class="text-primary">Launch your ticket ?</h5>
+                <a th:href="@{/board/programmer/projects/tickets/start(prId=${projectId},tId=${ticketId})}"
+                   onclick="if (!(confirm('start the ticket ?'))) return false" class="btn btn-success">Start</a>
             </div>
-            <div th:if="${ticket.status=='SUBMITTED FOR TESTING'}" class="col-md-3" >
-                <h5 class="text-white" >Ticket submitted for testing </h5>
+            <div th:if="${ticket.status=='SUBMITTED FOR TESTING'}" class="col-md-3">
+                <h5 class="text-white">Ticket submitted for testing </h5>
                 <h6 class="text-warning">Wait for tester feedback</h6>
+                <i class="fas fa-spinner"></i>
             </div>
             <div th:if="${ticket.status=='IN PROGRESS'}" class="col-md-3">
-                <h5 class="text-white" >Submit for Testing ?</h5>
-                <form th:action="@{'/board/programmer/projects/'+${projectId}+'/tickets/'+${ticketId}+'/submitToTest'}" method="post">
-                <button class="btn btn-danger">Submit</button>
-                </form>
+                <h5 class="text-white">Submit for Testing ?</h5>
+                <a th:href="@{/board/programmer/projects/tickets/submitToTest(prId=${projectId},tId=${ticketId})}"
+                   onclick="if (!(confirm('Submit the ticket for testing ?'))) return false" class="btn btn-success"><i
+                        class="fas fa-vials"></i></a>
             </div>
             <div class="col-md-3">
                 <h6 class="text-white">ticket created : </h6>
-                <h6 class="text-success" th:text="${ticket.creationDate}"></h6>
+                <h6 class="text-success" th:text="${ticket.createdDate}"></h6>
             </div>
             <div class="col-md-3">
                 <h6 class="text-white">ticket started :</h6>
@@ -92,16 +95,17 @@
                 <h6 class="text-white">Submitted for testing : </h6>
                 <h6 th:if="${ticket.status=='SUBMITTED FOR TESTING'}"
                     class="text-success" th:text="${submissionDate}"></h6>
-                <h6 class="text-danger" th:unless="${ticket.status=='SUBMITTED FOR TESTING'}" >
+                <h6 class="text-danger" th:unless="${ticket.status=='SUBMITTED FOR TESTING'}">
                     NOT SUBMITTED
                 </h6>
             </div>
         </div>
     </div>
-    <div th:if="${project.status=='NOT STARTED'}"  sec:authorize="hasRole('ROLE_P')" class="container" style="margin-top: 5%; margin-bottom: 5%">
+    <div th:if="${project.status=='NOT STARTED'}" sec:authorize="hasRole('ROLE_P')" class="container"
+         style="margin-top: 5%; margin-bottom: 5%">
         <div class="row bg-dark" style="min-height:100px;text-align:center; align-items: center;">
             <div class="col-md-12">
-                <h4 class="text-white" >Project Manager did not start the project yet</h4>
+                <h4 class="text-white">Project Manager did not start the project yet</h4>
                 <h5 class="text-warning">Wait for project to be started !</h5>
                 <h6 class="text-success">In the meantime you can add some comments</h6>
             </div>

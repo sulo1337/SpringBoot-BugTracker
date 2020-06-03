@@ -9,6 +9,13 @@
 <div th:fragment="test"  id="results-block">
     <h3 th:text="${TheName}"></h3>
 </div>
+<div th:fragment="astest"  id="results-assigned">
+    <ul class="list-group">
+        <li th:each="employee: ${assignedEmployees}" class="list-group-item d-flex justify-content-between"><p class="p-0 m-0 flex-grow-1"  th:text="${employee.firstName}"></p>
+            <a th:href="@{/board/manager/projects/new/deleteEmp(empId=${employee.employeeId})}" class="btn btn-danger btn-sm"><i class="fas fa-user-minus"></i></a>
+        </li>
+    </ul>
+</div>
 
 </body>
 </html>
