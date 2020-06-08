@@ -48,6 +48,15 @@
         </div>
         <div class="form-group row">
 
+            <div class="list-group">
+                <span class="badge badge-primary">choose project deadline</span>
+                <div class="list-group-item list-group-item-action d-flex">
+                    <div class="p-2 flex-grow-1">
+                        <input id="dp3" th:field="${project.deadline}" />
+                    </div>
+                </div>
+                <span class="badge badge-danger" th:if="${#fields.hasErrors('deadline')}" th:errors="*{deadline}">deadline Error</span>
+            </div>
         </div>
         <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
         <div class="col-sm-4">
@@ -56,6 +65,12 @@
     </form>
 
 </div>
+<script type="text/javascript">
+    $('#dp3').datepicker({
+        format: 'yyyy-mm-dd'});
+</script>
+
+<script type="text/javascript" th:src="@{js/Requests.js}"></script>
 </body>
 
 </html>

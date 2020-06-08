@@ -7,8 +7,8 @@
 <header th:replace="layouts::nav"></header>
 <body>
 <div class="container">
-    <h5 >Your Projects</h5>
     <div class="col-md-6 ">
+        <h2 class="text-center"> Your projects </h2>
         <div th:each="project:${allProjects}" class="list-group">
             <a class="list-group-item list-group-item-action flex-column align-items-start bg-dark btn-primary" th:href="@{'/board/programmer/projects/'+${project.projectId}}" style="margin-bottom: 10px">
                 <div class="d-flex w-100 justify-content-between">

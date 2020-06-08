@@ -31,8 +31,8 @@
                     <td>
                         <a class="text-warning" th:text="${project.name}" th:value="${project.projectId}" th:href="@{'/board/manager/projects/'+${project.projectId}}"></a></td>
                     <td th:text="${project.status}"></td>
-                    <td>Assigned Employees</td>
-                    <td>Uncompleted Tickets</td>
+                    <td th:text="${project.employees.size()}"></td>
+                    <td th:if="${project.tickets!='null'}" th:text="${project.tickets.size()}"></td>
                     <td>
                         <a th:href="@{/board/manager/projects/update(prId=${project.projectId})}" class="btn btn-secondary btn-sm"><i class="fas fa-edit"></i></a>
                         <a th:href="@{/board/manager/projects/delete(prId=${project.projectId})}" onclick="if (!(confirm('Are you sure you want to delete ?'))) return false" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a>

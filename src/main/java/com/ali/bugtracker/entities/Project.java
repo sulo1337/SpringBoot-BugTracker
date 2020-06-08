@@ -1,9 +1,11 @@
 package com.ali.bugtracker.entities;
 
+import com.ali.bugtracker.customValidators.TimeFormat;
 import com.ali.bugtracker.customValidators.UniqueProject;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -11,6 +13,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 
@@ -30,7 +33,10 @@ public class Project extends Auditable<Project> {
     private String name;
     @NotBlank(message = "description is empty")
     private String description;
-   // private String creationDate;
+    @TimeFormat
+    @NotBlank(message = "deadline is empty")
+    private String deadline;
+
     private String status;// not started, in progress , completed
 
     @NotNull
@@ -45,11 +51,11 @@ public class Project extends Auditable<Project> {
     @OneToMany(mappedBy = "projectId")
     private List<Ticket> tickets;
 
-    public Project(Employee owner, String name, String description, String status) {
+    public Project(Employee owner, String name, String description,String deadline, String status) {
         this.owner = owner;
         this.name = name;
         this.description = description;
-      //  this.creationDate = creationDate;
+        this.deadline = deadline;
         this.status = status;
     }
 }

@@ -27,7 +27,7 @@ public class SecurityController {
     @GetMapping("/login")
     public  String displaySignIn(Principal principal){
         if(principal!=null)
-            return "redirect:/";
+            return "redirect:/home";
         else
             return "/main/sign-in";
     }

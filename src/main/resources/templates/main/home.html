@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layouts::header"></head>
+<header th:replace="layouts::nav"></header>
+
+<body>
+<div class="container" sec:authorize="hasRole('ROLE_M')">
+    <div class="row">
+        <div class="col-md-4">
+            <canvas id="myPieChart" height="75" width="75"></canvas>
+            <script>
+                var pieData = "[[${projectStatusCount}]]"
+                var timelineData = "[[${projectTimeList}]]"
+            </script>
+        </div>
+        <div class="col-md-8">
+            <h2 class="text-center"> Project Timelines </h2>
+            <div id="chart_div"></div>
+        </div>
+    </div>
+</div>
+<script sec:authorize="hasRole('ROLE_M')" type="text/javascript" th:src="@{js/PieChart.js}"></script>
+<script sec:authorize="hasRole('ROLE_M')" type="text/javascript" th:src="@{js/ProjectsTimeline.js}"></script>
+
+</body>
+</html>
