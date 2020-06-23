@@ -62,6 +62,12 @@
                         </select>
                         <span class="badge badge-danger"  th:if="${#fields.hasErrors('employeeId')}" th:errors="*{employeeId}">employees Error</span>
                     </div>
+                    <div th:if="${newOrOld=='old'}"  class="col-sm-6">
+                            <input  class="form-control form-control-sm" type="hidden" th:value="${ticket.status}"
+                                    th:field="${ticket.status}" readonly >
+                            <span class="badge badge-danger" th:if="${#fields.hasErrors('status')}"
+                                  th:errors="*{status}">status Error</span>
+                    </div>
                 </div>
 
                 <div class="form-group row">

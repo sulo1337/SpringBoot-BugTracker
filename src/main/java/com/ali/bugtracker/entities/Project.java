@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -36,7 +37,7 @@ public class Project extends Auditable<Project> {
     @TimeFormat
     @NotBlank(message = "deadline is empty")
     private String deadline;
-
+    @Pattern(regexp = "^(NOT STARTED|IN PROGRESS|COMPLETED)$" ,message = "invalid status")
     private String status;// not started, in progress , completed
 
     @NotNull
@@ -57,5 +58,12 @@ public class Project extends Auditable<Project> {
         this.description = description;
         this.deadline = deadline;
         this.status = status;
+    }
+
+    @PrePersist
+    void preInsert(){
+        if (this.status==null || this.status.equals("")){
+            this.status="NOT STARTED";
+        }
     }
 }

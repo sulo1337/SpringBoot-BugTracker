@@ -17,6 +17,7 @@ import java.util.Date;
 @Getter @Setter
 public class Auditable<U> {
 
+    @Column(updatable = false)
     @CreatedDate
     @Temporal(TemporalType.DATE)
     protected Date createdDate;

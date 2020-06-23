@@ -6,14 +6,14 @@
 </head>
 <header th:replace="layouts::nav"></header>
 <body>
-<div class="container">
-    <div class="col-md-6 ">
+<div class="d-flex justify-content-center">
+    <div class="col-md-9">
         <h2 class="text-center"> Your projects </h2>
         <div th:each="project:${allProjects}" class="list-group">
-            <a class="list-group-item list-group-item-action flex-column align-items-start bg-dark btn-primary" th:href="@{'/board/programmer/projects/'+${project.projectId}}" style="margin-bottom: 10px">
+            <a class="list-group-item list-group-item-action flex-column align-items-start bg-dark btn-primary border-success" th:href="@{'/board/programmer/projects/'+${project.projectId}}" style="margin-bottom: 10px">
                 <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1 text-success" th:text="${project.name}"></h5>
-                    <small class="text-danger" th:text="${ticketsCount.get(project.projectId)}"></small>
+                    <small class="text-primary font-weight-bold" th:text="${ticketsCount.get(project.projectId)}"></small>
                 </div>
                 <p class="mb-1 text-white" th:text="${project.description}"></p>
                 <small class="text-success" th:text="${project.status}"></small>

@@ -8,6 +8,8 @@ import com.ali.bugtracker.repositories.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TicketService {
 
@@ -22,5 +24,8 @@ public class TicketService {
     }
     public void save(Ticket ticket){ticketRepo.save(ticket);}
     public void delete(Ticket ticket){ticketRepo.delete(ticket);}
+    public List<Ticket> findTicketsByProjectIdAndStatus(Project projectId, String status){
+        return ticketRepo.findTicketsByProjectIdAndStatus(projectId,status);
+    }
 }
 

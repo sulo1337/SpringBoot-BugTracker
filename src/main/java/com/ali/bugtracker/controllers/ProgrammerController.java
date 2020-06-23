@@ -21,10 +21,7 @@ import java.util.List;
 @Controller
 @RequestMapping("board/programmer")
 public class ProgrammerController {
-    // date variable for creation date assigning
-    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
-    LocalDateTime now = LocalDateTime.now();
-    String date = dtf.format(now);
+
     //needed Repositories
     @Autowired
     ProjectService projectService;
@@ -152,7 +149,7 @@ public class ProgrammerController {
                 history.setTicketId(ticket);
                 history.setEmployeeId(currentProgrammer);
                 history.setEvent("STARTED");
-                history.setModificationDate(date);
+                history.setModificationDate(historyService.currentDate());
                 // save changes
                 ticketService.save(ticket);
                 historyService.save(history);
@@ -177,7 +174,7 @@ public class ProgrammerController {
                 history.setTicketId(ticket);
                 history.setEmployeeId(currentProgrammer);
                 history.setEvent("SUBMITTED FOR TESTING");
-                history.setModificationDate(date);
+                history.setModificationDate(historyService.currentDate());
                 // save changes
                 ticketService.save(ticket);
                 historyService.save(history);

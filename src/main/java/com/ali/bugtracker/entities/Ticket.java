@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,6 +37,7 @@ public class Ticket extends Auditable<Ticket> {
     private String description;
    // private String creationDate;
 
+    @Pattern(regexp = "^(NOT STARTED|IN PROGRESS|SUBMITTED FOR TESTING|COMPLETED)$" ,message = "invalid status")
     private String status; // not started, in progress, submitted for testing, completed
     @NotBlank(message = "Choose a priority")
     private String priority; // high, average, low
@@ -54,5 +56,12 @@ public class Ticket extends Auditable<Ticket> {
    //     this.creationDate = creationDate;
         this.status = status;
         this.priority=priority;
+    }
+
+    @PrePersist
+    void preInsert(){
+        if (this.status==null || this.status.equals("")){
+            this.status="NOT STARTED";
+        }
     }
 }

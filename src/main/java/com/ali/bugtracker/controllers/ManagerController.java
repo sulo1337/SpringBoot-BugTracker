@@ -55,6 +55,7 @@ public class ManagerController {
        // model.addAttribute("assignedEmployees",assignedEmployees);
         model.addAttribute("programmerEmployees", programmerEmployees);
         model.addAttribute("testerEmployees", testerEmployees);
+        model.addAttribute("newOrOld","new");
         model.addAttribute("project", project);
         return "/projects/project-form";
     }
@@ -73,7 +74,8 @@ public class ManagerController {
         } else {
             Employee owner = employeeService.findByEmail(principal.getName());
             project.setOwner(owner);
-            project.setStatus("NOT STARTED");
+
+        //    project.setStatus("NOT STARTED");
       //      project.setCreationDate(date);
             projectService.save(project);
             return "redirect:/board/manager?success";
@@ -97,6 +99,7 @@ public class ManagerController {
                 }
                 Ticket ticket = new Ticket();
                 model.addAttribute("ticket", ticket);
+                model.addAttribute("newOrOld","new");
                 List<Employee> allEmployees = projectService.findProgrammerByProject(projectId);
                 model.addAttribute("allEmployees", allEmployees);
                 model.addAttribute("uncompletedTickets", uncompletedTickets);
@@ -125,7 +128,6 @@ public class ManagerController {
             Employee currentManager = employeeService.findByEmail(principal.getName());
             // ticket fields
             ticket.setOwner(currentManager);
-            ticket.setStatus("NOT STARTED");
             ticket.setProjectId(project);
         //    ticket.setCreationDate(date);
             // history fields
@@ -204,6 +206,7 @@ public class ManagerController {
                 List<Employee> testerEmployees = employeeService.findAllByRoles("ROLE_T");
                 model.addAttribute("programmerEmployees",programmerEmployees);
                 model.addAttribute("testerEmployees",testerEmployees);
+                model.addAttribute("newOrOld","old");
                 model.addAttribute("project",project);
                 return "/projects/project-form";
             }
@@ -248,6 +251,7 @@ public class ManagerController {
                 model.addAttribute("uncompletedTickets", uncompletedTickets);
                 List<Employee> allEmployees = project.getEmployees();
                 model.addAttribute("allEmployees", allEmployees);
+                model.addAttribute("newOrOld","old");
                 model.addAttribute("ticket",ticket);
                 return "/projects/project-details-manager";
             }
