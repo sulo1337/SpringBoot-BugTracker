@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface HistoryRepository extends CrudRepository<History,Long> {
 
-    public History findHistoryByEventAndTicketId(String event, Ticket ticket);
+     History findHistoryByEventAndTicketId(String event, Ticket ticket);
 }

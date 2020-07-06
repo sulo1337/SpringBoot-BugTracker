@@ -51,8 +51,6 @@ public class ManagerController {
         Project project = new Project();
         List<Employee> programmerEmployees = employeeService.findAllByRoles("ROLE_P");
         List<Employee> testerEmployees = employeeService.findAllByRoles("ROLE_T");
-        // List<Employee> assignedEmployees=new ArrayList<>();
-       // model.addAttribute("assignedEmployees",assignedEmployees);
         model.addAttribute("programmerEmployees", programmerEmployees);
         model.addAttribute("testerEmployees", testerEmployees);
         model.addAttribute("newOrOld","new");
@@ -74,9 +72,6 @@ public class ManagerController {
         } else {
             Employee owner = employeeService.findByEmail(principal.getName());
             project.setOwner(owner);
-
-        //    project.setStatus("NOT STARTED");
-      //      project.setCreationDate(date);
             projectService.save(project);
             return "redirect:/board/manager?success";
         }
@@ -89,6 +84,7 @@ public class ManagerController {
         if (project != null) {
             Employee managerOfThisProject = project.getOwner();
             Employee currentManager = employeeService.findByEmail(principal.getName());
+            // check project owner first
             if (managerOfThisProject.getEmployeeId() == currentManager.getEmployeeId()) {
                 model.addAttribute("project", project);
                 List<Ticket> tickets = project.getTickets();
@@ -104,8 +100,8 @@ public class ManagerController {
                 model.addAttribute("allEmployees", allEmployees);
                 model.addAttribute("uncompletedTickets", uncompletedTickets);
                 return "projects/project-details-manager";
-            } else return "redirect:/board/manager";
-        } else return "redirect:/board/manager";
+            } else return "redirect:/board/manager?error";
+        } else return "redirect:/board/manager?error";
     }
 
     // save a new ticket to a project
@@ -129,12 +125,11 @@ public class ManagerController {
             // ticket fields
             ticket.setOwner(currentManager);
             ticket.setProjectId(project);
-        //    ticket.setCreationDate(date);
             // history fields
             History history = new History();
             history.setEmployeeId(currentManager);
             history.setTicketId(ticket);
-            history.setModificationDate(date);
+            history.setModificationDate(historyService.currentDate());
             history.setEvent("CREATED");
             ticketService.save(ticket);
             historyService.save(history);
@@ -145,15 +140,25 @@ public class ManagerController {
 
     // display the details of each ticket
     @GetMapping("/projects/{projectId}/tickets/{ticketId}")
-    public String displayTicketDetails(@PathVariable Long projectId, @PathVariable Long ticketId, Model model) {
+    public String displayTicketDetails(@PathVariable Long projectId, @PathVariable Long ticketId, Model model,Principal principal) {
+        Project project=projectService.findByProjectId(projectId);
         Ticket ticket = ticketService.findTicketByTicketId(ticketId);
-        Employee employee = ticket.getEmployeeId();
-        String ticketAssignedTo = employee.getFirstName() + " " + employee.getLastName();
-        List<Comment> comments = ticket.getComments();
-        model.addAttribute("ticket", ticket);
-        model.addAttribute("ticketAssignedTo", ticketAssignedTo);
-        model.addAttribute("comments", comments);
-        return "projects/ticket-details";
+        if (project!=null && ticket!=null){
+            Employee currentManager=employeeService.findByEmail(principal.getName());
+            Employee projectOwner=project.getOwner();
+            if (currentManager.getEmployeeId()==projectOwner.getEmployeeId()){
+                Employee assignedProgrammer = ticket.getEmployeeId();
+                String ticketAssignedTo = assignedProgrammer.getFirstName() + " " + assignedProgrammer.getLastName();
+                List<Comment> comments = ticket.getComments();
+                List<Bug> bugs = ticket.getBugs();
+                model.addAttribute("ticket", ticket);
+                model.addAttribute("ticketAssignedTo", ticketAssignedTo);
+                model.addAttribute("comments", comments);
+                model.addAttribute("bugs", bugs);
+                return "projects/ticket-details";
+            } else return "redirect:/board/manager?error";
+        } else return "redirect:/board/manager?error";
+
     }
 
     // start a project

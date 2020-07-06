@@ -20,12 +20,13 @@ public class ProjectService {
         return projectRepo.findAll();
     }
     public List<Project> findAllByOwner(Employee manager){
-    return projectRepo.findAllByOwner(manager);
+    return projectRepo.findAllByOwnerOrderByDeadline(manager);
     }
     public Project findByName(String name){ return projectRepo.findByName(name); }
     public Project findByProjectId(Long id){return projectRepo.findByProjectId(id);}
     public void save(Project project){projectRepo.save(project);}
     public void delete(Project project){projectRepo.delete(project);}
+
     public List<Employee> findProgrammerByProject(Long projectId){
          Project project=projectRepo.findByProjectId(projectId);
          List<Employee> allEmployees=project.getEmployees();

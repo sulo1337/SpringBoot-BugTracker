@@ -1,5 +1,6 @@
 package com.ali.bugtracker.entities;
 
+import com.ali.bugtracker.customValidators.FutureDate;
 import com.ali.bugtracker.customValidators.TimeFormat;
 import com.ali.bugtracker.customValidators.UniqueProject;
 import lombok.Getter;
@@ -35,6 +36,7 @@ public class Project extends Auditable<Project> {
     @NotBlank(message = "description is empty")
     private String description;
     @TimeFormat
+    @FutureDate
     @NotBlank(message = "deadline is empty")
     private String deadline;
     @Pattern(regexp = "^(NOT STARTED|IN PROGRESS|COMPLETED)$" ,message = "invalid status")

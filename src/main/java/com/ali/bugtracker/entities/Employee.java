@@ -46,6 +46,10 @@ public class Employee {
     private List<Comment> comments;
 
     @OneToMany(mappedBy = "employeeId")
+    private List<Bug> bugs;
+
+
+    @OneToMany(mappedBy = "employeeId")
     private List<History> histories;
 
     public Employee(String firstName, String lastName, String email,String password,String role){

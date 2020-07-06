@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface ProjectRepository extends CrudRepository<Project,Long> {
      List<Project> findAll();
-     List<Project> findAllByOwner(Employee manager);
+     List<Project> findAllByOwnerOrderByDeadline(Employee manager);
      Project findByName(String name);
      Project findByProjectId(Long id);
     @Query(value="select project_id from employee_project where employee_id=:employeeId",nativeQuery=true)

@@ -106,10 +106,12 @@ public class ProgrammerController {
                 Employee employee = ticket.getOwner();
                 String ownerName = employee.getFirstName() + " " + employee.getLastName();
                 List<Comment> comments = ticket.getComments();
+                List<Bug> bugs=ticket.getBugs();
                 model.addAttribute("ticket", ticket);
                 model.addAttribute("project", project);
                 model.addAttribute("ticketCreatedBy", ownerName);
                 model.addAttribute("comments", comments);
+                model.addAttribute("bugs",bugs);
                 model.addAttribute("comment", comment);
                 return "projects/ticket-details";
             }

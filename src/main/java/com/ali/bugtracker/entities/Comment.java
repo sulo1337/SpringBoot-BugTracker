@@ -24,12 +24,10 @@ public class Comment extends Auditable <Comment> {
     private Ticket ticketId;
     @NotEmpty(message = "write your comment first")
     private String commentText;
- //   private String creationDate;
 
     public Comment(Employee employeeId, Ticket ticketId, String commentText) {
         this.employeeId = employeeId;
         this.ticketId = ticketId;
         this.commentText = commentText;
-     //   this.creationDate = creationDate;
     }
 }

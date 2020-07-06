@@ -1,0 +1,67 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layouts::header">
+    <title>ticket Details</title>
+    <header th:replace="layouts::nav"></header>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-sm table-dark table-bordered table-striped">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Bug Description</th>
+                    <th>Created Date</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="bug: ${allBugs}">
+                    <td th:text="${bug.description}"></td>
+                    <td th:text="${bug.createdDate}"></td>
+                    <td th:text="${bug.severity}"></td>
+                    <td th:if="${!bug.fixed}" th:text="'Not Fixed'"></td>
+                    <td th:if="${bug.fixed}" th:text="'Fixed'"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h4 class="text-center text-danger">Found a bug ?</h4>
+            <form th:action="'/board/tester/projects/'+${projectId}+'/tickets/'+${ticketId}+'/bug/save'"
+                  th:object="${bug}" method="POST">
+
+                <div style="margin-top: 10px">
+                    <span class="badge badge-primary">Enter Bug Description</span>
+                    <textarea class="form-control" placeholder="Enter Bug Description" th:field="${bug.description}"
+                              style="resize: none"></textarea>
+                    <span class="badge badge-danger" th:if="${#fields.hasErrors('description')}"
+                          th:errors="*{description}">description Error</span>
+                </div>
+                <div class="row" style="margin-top: 10px">
+                    <div class="col-md-4">
+                        <span class="badge badge-primary">Choose bug severity</span>
+                        <select class="form-control form-control-sm" th:field="*{severity}">
+                            <option th:value="LOW">LOW</option>
+                            <option th:value="AVERAGE">AVERAGE</option>
+                            <option th:value="CRITICAL">CRITICAL</option>
+                        </select>
+                        <span class="badge badge-danger" th:if="${#fields.hasErrors('severity')}"
+                              th:errors="*{severity}">severity Error</span>
+                    </div>
+                </div>
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                <button class="btn btn-success" style="margin-top: 10px" type="submit">Submit</button>
+            </form>
+            <div th:if="${param.success}" class="alert alert-success">
+                Bug submitted !
+            </div>
+            <div th:if="${param.error}" class="alert alert-danger">
+                Error !
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

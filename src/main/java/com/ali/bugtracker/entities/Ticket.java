@@ -35,7 +35,6 @@ public class Ticket extends Auditable<Ticket> {
     private String name;
     @NotBlank(message = "description is empty")
     private String description;
-   // private String creationDate;
 
     @Pattern(regexp = "^(NOT STARTED|IN PROGRESS|SUBMITTED FOR TESTING|COMPLETED)$" ,message = "invalid status")
     private String status; // not started, in progress, submitted for testing, completed
@@ -46,6 +45,9 @@ public class Ticket extends Auditable<Ticket> {
     private List<Comment> comments;
 
     @OneToMany(mappedBy = "ticketId")
+    private List<Bug> bugs;
+
+    @OneToMany(mappedBy = "ticketId")
     private List<History> histories;
 
     public Ticket(Employee employeeId, Project projectId, String name, String description, String status, String priority) {
@@ -53,7 +55,6 @@ public class Ticket extends Auditable<Ticket> {
         this.projectId = projectId;
         this.name = name;
         this.description = description;
-   //     this.creationDate = creationDate;
         this.status = status;
         this.priority=priority;
     }
