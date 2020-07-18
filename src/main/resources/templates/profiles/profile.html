@@ -7,98 +7,78 @@
 <header th:replace="layouts::nav"></header>
 
 <body>
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-lg-4 pb-5">
-            <!-- Account Sidebar-->
-            <div class="author-card pb-3">
-                <div class="author-card-cover" style="background-image: url(https://demo.createx.studio/createx-html/img/widgets/author/cover.jpg);"><a class="btn btn-style-1 btn-white btn-sm" href="#" data-toggle="tooltip" title="" data-original-title="You currently have 290 Reward points to spend"><i class="fa fa-award text-md"></i>&nbsp;290 points</a></div>
-                <div class="author-card-profile">
-                    <div class="author-card-avatar"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Daniel Adams">
-                    </div>
-                    <div class="author-card-details">
-                        <h5 class="author-card-name text-lg">Daniel Adams</h5><span class="author-card-position">Joined February 06, 2017</span>
+<div th:object="${currentUser}" class="container">
+    <div class="row profile">
+
+        <div class="col-md-8">
+            <div class="profile-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4>Your Profile</h4>
+                        <br>
                     </div>
                 </div>
-            </div>
-            <div class="wizard">
-                <nav class="list-group list-group-flush">
-                    <a class="list-group-item" href="#">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div><i class="fe-icon-shopping-bag mr-1 text-muted"></i>
-                                <div class="d-inline-block font-weight-medium text-uppercase">Orders List</div>
-                            </div><span class="badge badge-secondary">6</span>
-                        </div>
-                    </a><a class="list-group-item active" href="#"><i class="fe-icon-user text-muted"></i>Profile Settings</a><a class="list-group-item" href="#"><i class="fe-icon-map-pin text-muted"></i>Addresses</a>
-                    <a class="list-group-item" href="#">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div><i class="fe-icon-heart mr-1 text-muted"></i>
-                                <div class="d-inline-block font-weight-medium text-uppercase">My Wishlist</div>
-                            </div><span class="badge badge-secondary">3</span>
-                        </div>
-                    </a>
-                    <a class="list-group-item" href="#">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div><i class="fe-icon-tag mr-1 text-muted"></i>
-                                <div class="d-inline-block font-weight-medium text-uppercase">My Tickets</div>
-                            </div><span class="badge badge-secondary">4</span>
-                        </div>
-                    </a>
-                </nav>
+                <table class="table table-user-information">
+                    <tbody>
+                    <tr>
+                        <td>Role:</td>
+                        <td th:text="${role}"></td>
+                    </tr>
+                    <tr>
+                        <td>First Name:</td>
+                        <td th:text="${currentUser.firstName}"></td>
+                    </tr>
+                    <tr>
+                        <td>Last Name:</td>
+                        <td th:text="${currentUser.lastName}"></td>
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td><a th:text="${currentUser.email}"></a></td>
+                    </tr>
+                    <!--if user is a programmer or tester only-->
+                    <tr sec:authorize="hasAnyRole('ROLE_P','ROLE_T')">
+                        <td>Total Number Of Projects:</td>
+                        <td th:text="${currentUser.projects.size()}"></td>
+                    </tr>
+                    <tr sec:authorize="hasRole('ROLE_P')">
+                        <td>Total Number Of Tickets:</td>
+                        <td th:text="${currentUser.tickets.size()}"></td>
+                    </tr>
+                    <tr sec:authorize="hasRole('ROLE_T')">
+                        <td>Total Number Of Created Bugs:</td>
+                        <td th:text="${currentUser.bugs.size()}"></td>
+                    </tr>
+                    <tr sec:authorize="hasRole('ROLE_P')">
+                        <td>Total Number Of Comments:</td>
+                        <td th:text="${currentUser.comments.size()}"></td>
+                    </tr>
+                    <!---->
+                    <!--if user is a project manager-->
+                    <tr sec:authorize="hasRole('ROLE_M')">
+                        <td>Total Created Projects:</td>
+                        <td th:text="${numberOfManagerProjects}"></td>
+                    </tr>
+                    <tr sec:authorize="hasRole('ROLE_M')">
+                        <td>Total Created Tickets:</td>
+                        <td th:text="${numberOfManagerTickets}"></td>
+                    </tr>
+                    <!---->
+                    </tbody>
+                </table>
             </div>
         </div>
-        <!-- Profile Settings-->
-        <div class="col-lg-8 pb-5">
-            <form class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="account-fn">First Name</label>
-                        <input class="form-control" type="text" id="account-fn" value="Daniel" required="">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="account-ln">Last Name</label>
-                        <input class="form-control" type="text" id="account-ln" value="Adams" required="">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="account-email">E-mail Address</label>
-                        <input class="form-control" type="email" id="account-email" value="daniel.adams@example.com" disabled="">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="account-phone">Phone Number</label>
-                        <input class="form-control" type="text" id="account-phone" value="+7 (805) 348 95 72" required="">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="account-pass">New Password</label>
-                        <input class="form-control" type="password" id="account-pass">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="account-confirm-pass">Confirm Password</label>
-                        <input class="form-control" type="password" id="account-confirm-pass">
-                    </div>
-                </div>
-                <div class="col-12">
-                    <hr class="mt-2 mb-3">
-                    <div class="d-flex flex-wrap justify-content-between align-items-center">
-                        <div class="custom-control custom-checkbox d-block">
-                            <input class="custom-control-input" type="checkbox" id="subscribe_me" checked="">
-                            <label class="custom-control-label" for="subscribe_me">Subscribe me to Newsletter</label>
-                        </div>
-                        <button class="btn btn-style-1 btn-primary" type="button" data-toast="" data-toast-position="topRight" data-toast-type="success" data-toast-icon="fe-icon-check-circle" data-toast-title="Success!" data-toast-message="Your profile updated successfuly.">Update Profile</button>
-                    </div>
-                </div>
-            </form>
+        <div class="col-md-4">
+            <canvas id="myPieChart" height="75" width="75"></canvas>
+            <script>
+                var pieData = "[[${StatusCount}]]"
+            </script>
         </div>
     </div>
 </div>
+<script sec:authorize="hasRole('ROLE_M')" type="text/javascript" th:src="@{js/ManagerPieChart.js}"></script>
+<script sec:authorize="hasRole('ROLE_P')" type="text/javascript" th:src="@{js/ProgrammerPieChart.js}"></script>
+<script sec:authorize="hasRole('ROLE_T')" type="text/javascript" th:src="@{js/TesterPieChart.js}"></script>
+
 </body>
 </html>

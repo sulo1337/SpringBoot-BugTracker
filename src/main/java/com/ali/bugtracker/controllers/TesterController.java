@@ -9,7 +9,6 @@ import com.ali.bugtracker.services.EmployeeService;
 import com.ali.bugtracker.services.ProjectService;
 import com.ali.bugtracker.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -88,7 +87,7 @@ public class TesterController {
                 model.addAttribute("bug", bug);
                 model.addAttribute("ticket", ticket);
                 model.addAttribute("allBugs", allBugs);
-                return "projects/ticket-details-tester";
+                return "tickets/ticket-details-tester";
             }
         } else return "redirect:/board/tester";
     }
@@ -108,7 +107,7 @@ public class TesterController {
                    List<Bug> allBugs = bugService.findBugsByTicketId(ticket);
                    model.addAttribute("ticket", ticket);
                    model.addAttribute("allBugs", allBugs);
-                   return "projects/ticket-details-tester";
+                   return "tickets/ticket-details-tester";
                } else {
                    Employee tester = employeeService.findByEmail(principal.getName());
                    bug.setEmployeeId(tester);

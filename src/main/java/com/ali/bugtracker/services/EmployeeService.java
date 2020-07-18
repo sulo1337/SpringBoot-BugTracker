@@ -1,5 +1,6 @@
 package com.ali.bugtracker.services;
 
+import com.ali.bugtracker.dto.EmployeeProject;
 import com.ali.bugtracker.entities.Employee;
 import com.ali.bugtracker.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ public class EmployeeService {
     @Autowired
     EmployeeRepository empRepo;
 
+
     public List<Employee> findAll(){
         return empRepo.findAll();
     }
@@ -24,7 +26,9 @@ public class EmployeeService {
     }
     public void save(Employee employee){empRepo.save(employee); }
     public void delete(Employee employee){empRepo.delete(employee);}
-
+    public List<EmployeeProject> employeeProjects(){
+        return empRepo.employeeProjects();
+    }
     public Employee findByEmployeeId(Long employeeId) {
         return empRepo.findByEmployeeId(employeeId);
     }

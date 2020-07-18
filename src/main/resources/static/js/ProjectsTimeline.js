@@ -11,6 +11,7 @@ google.charts.load('current', {'packages':['timeline']});
 google.charts.setOnLoadCallback(drawChart);
 
 function drawChart() {
+
     var container = document.getElementById('chart_div');
     var chart = new google.visualization.Timeline(container);
     var dataTable = new google.visualization.DataTable();
@@ -28,6 +29,9 @@ function drawChart() {
     }
     chart.draw(dataTable);
 }
+$(window).resize(function(){
+    drawChart();
+});
 function decodeHtml(html) {
     var txt = document.createElement("textarea");
     txt.innerHTML = html;

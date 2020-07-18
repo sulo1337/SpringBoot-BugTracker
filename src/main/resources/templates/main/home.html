@@ -5,22 +5,17 @@
 <header th:replace="layouts::nav"></header>
 
 <body>
-<div class="container" sec:authorize="hasRole('ROLE_M')">
-    <div class="row">
-        <div class="col-md-4">
-            <canvas id="myPieChart" height="75" width="75"></canvas>
-            <script>
-                var pieData = "[[${projectStatusCount}]]"
-                var timelineData = "[[${projectTimeList}]]"
-            </script>
-        </div>
-        <div class="col-md-8">
-            <h2 class="text-center"> Project Timelines </h2>
-            <div id="chart_div"></div>
-        </div>
+<div class="container" id="chart_parent" sec:authorize="hasRole('ROLE_M')">
+    <script>
+        var timelineData = "[[${projectTimeList}]]"
+        var chartwidth = $('#chart_parent').width();
+    </script>
+    <div class="col-md-12">
+        <h2 class="text-center"> Project Timelines </h2>
+        <div id="chart_div" style="min-height: inherit; max-height: inherit"></div>
     </div>
+
 </div>
-<script sec:authorize="hasRole('ROLE_M')" type="text/javascript" th:src="@{js/PieChart.js}"></script>
 <script sec:authorize="hasRole('ROLE_M')" type="text/javascript" th:src="@{js/ProjectsTimeline.js}"></script>
 
 </body>

@@ -6,7 +6,7 @@
 <body>
 <div class="container">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <table class="table table-sm table-dark table-bordered table-striped">
                 <thead class="thead-dark">
                 <tr>
@@ -21,13 +21,13 @@
                     <td th:text="${bug.description}"></td>
                     <td th:text="${bug.createdDate}"></td>
                     <td th:text="${bug.severity}"></td>
-                    <td th:if="${!bug.fixed}" th:text="'Not Fixed'"></td>
-                    <td th:if="${bug.fixed}" th:text="'Fixed'"></td>
+                    <td class="text-danger" th:if="${!bug.fixed}" th:text="'Not Fixed'"></td>
+                    <td class="text-success" th:if="${bug.fixed}" th:text="'Fixed'"></td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <h4 class="text-center text-danger">Found a bug ?</h4>
             <form th:action="'/board/tester/projects/'+${projectId}+'/tickets/'+${ticketId}+'/bug/save'"
                   th:object="${bug}" method="POST">

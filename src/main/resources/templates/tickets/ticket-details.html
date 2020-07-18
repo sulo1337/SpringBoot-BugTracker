@@ -44,42 +44,48 @@
         </div>
         <div class="col-md-8">
             <h2 th:if="${ticket.comments.size()!=0}" class="text-center">Comments Table</h2>
-            <table th:if="${ticket.comments.size()!=0}" class="table table-sm table-dark table-bordered table-striped">
-                <thead class="thead-dark">
-                <tr>
-                    <th>Comment</th>
-                    <th>Comment Date</th>
-                    <th>Commented By</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="comment: ${comments}">
-                    <td th:text="${comment.commentText}"></td>
-                    <td th:text="${comment.createdDate}"></td>
-                    <td th:text="${comment.lastModifiedBy}"></td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table th:if="${ticket.comments.size()!=0}"
+                       class="table table-sm table-dark table-bordered table-striped">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Comment</th>
+                        <th>Comment Date</th>
+                        <th>Commented By</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="comment: ${comments}">
+                        <td th:text="${comment.commentText}"></td>
+                        <td th:text="${comment.createdDate}"></td>
+                        <td th:text="${comment.lastModifiedBy}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!--bug table-->
             <h2 th:if="${ticket.bugs.size()!=0}" class="text-center">Bugs Table</h2>
-            <table th:if="${ticket.bugs.size()!=0}" class="table table-sm table-dark table-bordered table-striped">
-                <thead class="thead-dark">
-                <tr>
-                    <th>Bug</th>
-                    <th>Date</th>
-                    <th>Severity</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="bug: ${bugs}">
-                    <td th:text="${bug.description}"></td>
-                    <td th:text="${bug.createdDate}"></td>
-                    <td th:text="${bug.severity}"></td>
-                    <td class="text-danger" th:if="${!bug.fixed}" th:text="'Not Fixed'"></td>
-                    <td class="text-success" th:if="${bug.fixed}" th:text="'Fixed'"></td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table th:if="${ticket.bugs.size()!=0}" class="table table-sm table-dark table-bordered table-striped">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Bug</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="bug: ${bugs}">
+                        <td sec:authorize="hasRole('ROLE_P')"><a class="text-warning" th:text="${bug.description}"
+                                                                 th:value="${bug.bugId}"
+                                                                 th:href="@{'/board/programmer/projects/'+${project.projectId}+'/tickets/'+${ticket.ticketId}+'/bugs/'+${bug.bugId}}"></a>
+                        </td>
+                        <td sec:authorize="hasRole('ROLE_M')" th:text="${bug.description}"></td>
+                        <td class="text-danger" th:if="${!bug.fixed}" th:text="'Not Fixed'"></td>
+                        <td class="text-success" th:if="${bug.fixed}" th:text="'Fixed'"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <div th:if="${project.status!='NOT STARTED'}" sec:authorize="hasRole('ROLE_P')" th:object="${ticket}"
@@ -93,7 +99,7 @@
             <div th:if="${ticket.status=='SUBMITTED FOR TESTING'}" class="col-md-3">
                 <h5 class="text-white">Ticket submitted for testing </h5>
                 <div th:if="${ticket.bugs.size()==0}">
-                <h6 class="text-warning">Wait for tester feedback</h6>
+                    <h6 class="text-warning">Wait for tester feedback</h6>
                     <i class="fas fa-spinner"></i>
                 </div>
                 <div th:if="${ticket.bugs.size()!=0}">

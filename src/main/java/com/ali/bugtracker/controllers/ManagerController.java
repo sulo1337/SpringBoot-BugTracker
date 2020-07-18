@@ -20,10 +20,6 @@ import java.util.List;
 @Controller
 @RequestMapping("/board/manager")
 public class ManagerController {
-    // date variable for creation date assigning
-    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
-    LocalDateTime now = LocalDateTime.now();
-    String date = dtf.format(now);
     // needed repositories
     @Autowired
     EmployeeService employeeService;
@@ -155,7 +151,7 @@ public class ManagerController {
                 model.addAttribute("ticketAssignedTo", ticketAssignedTo);
                 model.addAttribute("comments", comments);
                 model.addAttribute("bugs", bugs);
-                return "projects/ticket-details";
+                return "tickets/ticket-details";
             } else return "redirect:/board/manager?error";
         } else return "redirect:/board/manager?error";
 

@@ -1,10 +1,12 @@
 package com.ali.bugtracker.services;
 
+import com.ali.bugtracker.dto.ChartData;
 import com.ali.bugtracker.entities.Employee;
 import com.ali.bugtracker.entities.Project;
 import com.ali.bugtracker.repositories.ProjectRepository;
 import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,7 +28,8 @@ public class ProjectService {
     public Project findByProjectId(Long id){return projectRepo.findByProjectId(id);}
     public void save(Project project){projectRepo.save(project);}
     public void delete(Project project){projectRepo.delete(project);}
-
+    public Long countAllByOwner(Employee owner){ return projectRepo.countAllByOwner(owner); }
+    public List<ChartData> getProjectStatus(Long ownerId){ return projectRepo.getProjectStatus(ownerId); }
     public List<Employee> findProgrammerByProject(Long projectId){
          Project project=projectRepo.findByProjectId(projectId);
          List<Employee> allEmployees=project.getEmployees();

@@ -9,39 +9,45 @@
 <div class="container">
     <div class="group-form row">
         <div class="col-md-2">
-        <a th:href="@{/board/manager/projects/new}" class="btn btn-primary btn-sm mb-3"> Create New Project</a>
+            <a th:href="@{/board/manager/projects/new}" class="btn btn-primary btn-sm mb-3"> Create New Project</a>
         </div>
     </div>
     <!-- all projects table -->
     <div class="group-form row">
         <div class="col-md-12">
-            <h3 class="text-dark">here is all your created projects</h3>
-            <table class="table table-sm table-dark table-bordered table-striped">
-                <thead class="thead-dark">
-                <tr>
-                    <th>Project Name</th>
-                    <th>Project Stage</th>
-                    <th>Assigned Employees</th>
-                    <th>Uncompleted Tickets</th>
-                    <th>Project Deadline</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="project: ${projects}">
-                    <td>
-                        <a class="text-warning" th:text="${project.name}" th:value="${project.projectId}" th:href="@{'/board/manager/projects/'+${project.projectId}}"></a></td>
-                    <td th:text="${project.status}"></td>
-                    <td th:text="${project.employees.size()}"></td>
-                    <td th:if="${project.tickets!='null'}" th:text="${project.tickets.size()}"></td>
-                    <td class="text-danger" th:text="${project.deadline}"></td>
-                    <td>
-                        <a th:href="@{/board/manager/projects/update(prId=${project.projectId})}" class="btn btn-secondary btn-sm"><i class="fas fa-edit"></i></a>
-                        <a th:href="@{/board/manager/projects/delete(prId=${project.projectId})}" onclick="if (!(confirm('Are you sure you want to delete ?'))) return false" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <h3 class="text-dark text-center">here is all your created projects</h3>
+            <div class="table-responsive">
+                <table class="table table-sm table-dark table-bordered table-striped">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Project Name</th>
+                        <th>Project Stage</th>
+                        <th>Assigned Employees</th>
+                        <th>Uncompleted Tickets</th>
+                        <th>Project Deadline</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="project: ${projects}">
+                        <td>
+                            <a class="text-warning" th:text="${project.name}" th:value="${project.projectId}"
+                               th:href="@{'/board/manager/projects/'+${project.projectId}}"></a></td>
+                        <td th:text="${project.status}"></td>
+                        <td th:text="${project.employees.size()}"></td>
+                        <td th:if="${project.tickets!='null'}" th:text="${project.tickets.size()}"></td>
+                        <td class="text-danger" th:text="${project.deadline}"></td>
+                        <td>
+                            <a th:href="@{/board/manager/projects/update(prId=${project.projectId})}"
+                               class="btn btn-secondary btn-sm"><i class="fas fa-edit"></i></a>
+                            <a th:href="@{/board/manager/projects/delete(prId=${project.projectId})}"
+                               onclick="if (!(confirm('Are you sure you want to delete ?'))) return false"
+                               class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <div class="group-form row">

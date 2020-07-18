@@ -27,7 +27,7 @@ public class SecurityController {
     @GetMapping("/login")
     public  String displaySignIn(Principal principal){
         if(principal!=null)
-            return "redirect:/home";
+            return "redirect:/profile";
         else
             return "/main/sign-in";
     }
@@ -35,7 +35,7 @@ public class SecurityController {
     @GetMapping("/register")
     public String displayRegisterPage(Model model,Principal principal){
         if(principal!=null)
-            return "redirect:/";
+            return "redirect:/profile";
         else {
         Employee employee =new Employee();
         model.addAttribute("employee",employee);

@@ -2,7 +2,6 @@ package com.ali.bugtracker.controllers;
 
 
 import com.ali.bugtracker.entities.*;
-import com.ali.bugtracker.repositories.*;
 import com.ali.bugtracker.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +30,8 @@ public class ProgrammerController {
     CommentService commentService;
     @Autowired
     HistoryService historyService;
+    @Autowired
+    BugService bugService;
 
     //display programmer board
     @GetMapping()
@@ -106,14 +105,14 @@ public class ProgrammerController {
                 Employee employee = ticket.getOwner();
                 String ownerName = employee.getFirstName() + " " + employee.getLastName();
                 List<Comment> comments = ticket.getComments();
-                List<Bug> bugs=ticket.getBugs();
+                List<Bug> bugs = ticket.getBugs();
                 model.addAttribute("ticket", ticket);
                 model.addAttribute("project", project);
                 model.addAttribute("ticketCreatedBy", ownerName);
                 model.addAttribute("comments", comments);
-                model.addAttribute("bugs",bugs);
+                model.addAttribute("bugs", bugs);
                 model.addAttribute("comment", comment);
-                return "projects/ticket-details";
+                return "tickets/ticket-details";
             }
         } else return "redirect:/board/programmer";
 
@@ -127,7 +126,7 @@ public class ProgrammerController {
         } else {
             Employee currentEmployee = employeeService.findByEmail(principal.getName());
             Ticket ticket = ticketService.findTicketByTicketId(ticketId);
-           // comment.setCreationDate(date);
+            // comment.setCreationDate(date);
             comment.setEmployeeId(currentEmployee);
             comment.setTicketId(ticket);
             commentService.save(comment);
@@ -145,6 +144,7 @@ public class ProgrammerController {
             if (currentProgrammer != programmerAssignedTo) {
                 return "redirect:/board/programmer";
             } else {
+                if (ticket.getStatus().equals("NOT STARTED")){
                 ticket.setStatus("IN PROGRESS");
                 // history fields
                 History history = new History();
@@ -156,6 +156,8 @@ public class ProgrammerController {
                 ticketService.save(ticket);
                 historyService.save(history);
                 return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
+                }
+                else return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
             }
         } else return "redirect:/board/programmer";
     }
@@ -170,6 +172,7 @@ public class ProgrammerController {
             if (currentProgrammer != programmerAssignedTo) {
                 return "redirect:/board/programmer";
             } else {
+                if (ticket.getStatus().equals("IN PROGRESS")){
                 ticket.setStatus("SUBMITTED FOR TESTING");
                 // history fields
                 History history = new History();
@@ -181,6 +184,44 @@ public class ProgrammerController {
                 ticketService.save(ticket);
                 historyService.save(history);
                 return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
+                }else return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
+            }
+        } else return "redirect:/board/programmer";
+    }
+
+    // display bug details apge
+    @GetMapping("/projects/{projectId}/tickets/{ticketId}/bugs/{bugId}")
+    public String displayBugDetails(@PathVariable Long projectId, @PathVariable Long ticketId, @PathVariable Long bugId, Model model, Principal principal) {
+        Ticket ticket = ticketService.findTicketByTicketId(ticketId);
+        Bug bug = bugService.findBugByBugId(bugId);
+        if (ticket != null && bug != null) {
+            Employee currentProgrammer = employeeService.findByEmail(principal.getName());
+            Employee programmerAssignedTo = ticket.getEmployeeId();
+            if (currentProgrammer != programmerAssignedTo) {
+                return "redirect:/board/programmer";
+            } else {
+                Employee createdBy = bug.getEmployeeId();
+                String testerName = createdBy.getFirstName() + " " + createdBy.getLastName();
+                model.addAttribute("testerName", testerName);
+                model.addAttribute("bug", bug);
+                return "tickets/bug-details";
+            }
+        } else return "redirect:/board/programmer";
+    }
+
+    @GetMapping("/projects/tickets/bugs/fix")
+    public String fixBug(@RequestParam("prId") Long projectId, @RequestParam("tId") Long ticketId, @RequestParam("bugId") Long bugId, Principal principal) {
+        Ticket ticket = ticketService.findTicketByTicketId(ticketId);
+        Bug bug = bugService.findBugByBugId(bugId);
+        if (ticket != null && bug != null) {
+            Employee currentProgrammer = employeeService.findByEmail(principal.getName());
+            Employee programmerAssignedTo = ticket.getEmployeeId();
+            if (currentProgrammer != programmerAssignedTo) {
+                return "redirect:/board/programmer";
+            } else {
+                bug.setFixed(true);
+                bugService.save(bug);
+                return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId+"/bugs/"+bugId;
             }
         } else return "redirect:/board/programmer";
     }
