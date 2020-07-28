@@ -29,6 +29,8 @@ public class Employee {
     @NotBlank(message = "password field is empty")
     private String password;
 
+    private boolean enabled;
+
     @NotBlank(message = "Choose a role")
     @Pattern(regexp = "^(ROLE_M|ROLE_P|ROLE_T)$" ,message = "invalid role")
     private String role;
@@ -58,6 +60,7 @@ public class Employee {
         this.email = email;
         this.password=password;
         this.role=role;
+        this.enabled=false;
     }
 
 

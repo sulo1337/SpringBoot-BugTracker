@@ -67,6 +67,10 @@
 
         <div th:if="${param.success}" class="alert alert-success">
             You have successfully registered !
+            A confirmation Email has been sent!
+        </div>
+        <div th:if="${param.error}" class="alert alert-success">
+            Something Went wrong,Couldn't Confirm Your Email !
         </div>
     </div>
 </div>
