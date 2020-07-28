@@ -24,36 +24,40 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <!-- this is for selectpicker Latest compiled and minified CSS -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
     <!-- for the date picker-->
     <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.10/js/gijgo.min.js" type="text/javascript"></script>
     <link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.10/css/gijgo.min.css" rel="stylesheet" type="text/css"/>
+    <!--data tables-->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+    <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css"/>
+
 </head>
 <body>
 <!-- Fragment #2 : Navbar contains nav links -->
 <div th:fragment="nav" style="margin-bottom: 1%">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-        <a href="#" class="navbar-brand">Bug Tracker</a>
+        <h4  class="navbar-brand">Bug Tracker</h4>
         <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav">
-                <a sec:authorize="isAuthenticated()" th:href="@{/home}" class="nav-item nav-link">Home</a>
+                <a sec:authorize="hasRole('ROLE_M')" th:href="@{/home}" class="nav-item nav-link">Home</a>
                 <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="nav-item nav-link">Profile</a>
                 <a sec:authorize="hasRole('ROLE_A')" th:href="@{/board/admin}" class="nav-item nav-link">Admin Board</a>
                 <a sec:authorize="hasRole('ROLE_M')" th:href="@{/board/manager}" class="nav-item nav-link">Manager Board</a>
                 <a sec:authorize="hasRole('ROLE_P')" th:href="@{/board/programmer}" class="nav-item nav-link">Programmer Board</a>
-                <a sec:authorize="hasRole('ROLE_T')" th:href="@{/board/tester}" class="nav-item nav-link">>Tester  Board</a>
+                <a sec:authorize="hasRole('ROLE_T')" th:href="@{/board/tester}" class="nav-item nav-link">Tester Board</a>
 
             </div>
             <div class="navbar-nav ml-auto">
-                <a  sec:authorize="isAuthenticated()" th:href="@{/logout}" role="button" class="nav-item nav-link btn btn-danger btn-sm">Sign out</a>
+                <a  sec:authorize="isAuthenticated()" th:href="@{/logout}" role="button" class="nav-item nav-link btn btn-danger btn-sm text-white">Sign out</a>
             </div>
         </div>
     </nav>

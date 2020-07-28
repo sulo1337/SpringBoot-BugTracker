@@ -37,7 +37,9 @@ public class ManagerController {
     public String displayManagerBoard(Model model, Principal principal) {
         Employee currentManager = employeeService.findByEmail(principal.getName());
         List<Project> projects = projectService.findAllByOwner(currentManager);
+        String managerName=currentManager.getFirstName()+"'s";
         model.addAttribute("projects", projects);
+        model.addAttribute("managerName",managerName);
         return "boards/manager-board";
     }
 
@@ -147,7 +149,9 @@ public class ManagerController {
                 String ticketAssignedTo = assignedProgrammer.getFirstName() + " " + assignedProgrammer.getLastName();
                 List<Comment> comments = ticket.getComments();
                 List<Bug> bugs = ticket.getBugs();
+                String OwnerName=projectOwner.getFirstName()+" "+projectOwner.getLastName();
                 model.addAttribute("ticket", ticket);
+                model.addAttribute("ticketCreatedBy", OwnerName);
                 model.addAttribute("ticketAssignedTo", ticketAssignedTo);
                 model.addAttribute("comments", comments);
                 model.addAttribute("bugs", bugs);

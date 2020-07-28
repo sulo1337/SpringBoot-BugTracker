@@ -23,7 +23,7 @@ public class Auditable<U> {
     protected Date createdDate;
 
     @LastModifiedBy
-    protected String lastModifiedBy;
+    protected U lastModifiedBy;
 
     @LastModifiedDate
     @Temporal(TemporalType.DATE)

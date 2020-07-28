@@ -21,7 +21,7 @@ import java.util.List;
 
 @Entity
 @Getter @Setter @NoArgsConstructor
-public class Project extends Auditable<Project> {
+public class Project extends Auditable<String> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -15,9 +15,9 @@
     <!-- all projects table -->
     <div class="group-form row">
         <div class="col-md-12">
-            <h3 class="text-dark text-center">here is all your created projects</h3>
-            <div class="table-responsive">
-                <table class="table table-sm table-dark table-bordered table-striped">
+            <h4 class="text-center text-secondary font-weight-bold" th:text="${managerName+' Projects'}">All Projects</h4>
+            <div class="table-responsive" style="margin-bottom: 1%">
+                <table id="projectsTable" class="table table-sm table-light table-bordered table-striped ">
                     <thead class="thead-dark">
                     <tr>
                         <th>Project Name</th>
@@ -31,7 +31,7 @@
                     <tbody>
                     <tr th:each="project: ${projects}">
                         <td>
-                            <a class="text-warning" th:text="${project.name}" th:value="${project.projectId}"
+                            <a class="text-primary font-weight-bold" th:text="${project.name}" th:value="${project.projectId}"
                                th:href="@{'/board/manager/projects/'+${project.projectId}}"></a></td>
                         <td th:text="${project.status}"></td>
                         <td th:text="${project.employees.size()}"></td>
@@ -61,5 +61,10 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        $('#projectsTable').DataTable();
+    } );
+</script>
 </body>
 </html>

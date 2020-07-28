@@ -35,6 +35,9 @@ public class TicketService {
     public List<ChartData> getTicketStatus(Long employeeId){
         return ticketRepo.getTicketStatus(employeeId);
     }
+    public Long countTicketsByProjectIdAndStatus(Project projectId,String status){
+        return ticketRepo.countTicketsByProjectIdAndStatus(projectId,status);
+    }
 
 }
 

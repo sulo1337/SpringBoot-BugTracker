@@ -4,29 +4,32 @@
     <title>ticket Details</title>
     <header th:replace="layouts::nav"></header>
 <body>
-<div class="container">
+<div class="container" th:if="${ticket.status!='COMPLETED'}">
     <div class="row">
         <div class="col-md-8">
-            <table class="table table-sm table-dark table-bordered table-striped">
-                <thead class="thead-dark">
-                <tr>
-                    <th>Bug Description</th>
-                    <th>Created Date</th>
-                    <th>Severity</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="bug: ${allBugs}">
-                    <td th:text="${bug.description}"></td>
-                    <td th:text="${bug.createdDate}"></td>
-                    <td th:text="${bug.severity}"></td>
-                    <td class="text-danger" th:if="${!bug.fixed}" th:text="'Not Fixed'"></td>
-                    <td class="text-success" th:if="${bug.fixed}" th:text="'Fixed'"></td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table id="bugTable" class="table table-sm table-dark table-bordered table-striped">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Bug Description</th>
+                        <th>Created Date</th>
+                        <th>Severity</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="bug: ${allBugs}">
+                        <td th:text="${bug.description}"></td>
+                        <td th:text="${bug.createdDate}"></td>
+                        <td th:text="${bug.severity}"></td>
+                        <td class="text-danger" th:if="${!bug.fixed}" th:text="'Not Fixed'"></td>
+                        <td class="text-success" th:if="${bug.fixed}" th:text="'Fixed'"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+        <br>
         <div class="col-md-4">
             <h4 class="text-center text-danger">Found a bug ?</h4>
             <form th:action="'/board/tester/projects/'+${projectId}+'/tickets/'+${ticketId}+'/bug/save'"
@@ -40,7 +43,7 @@
                           th:errors="*{description}">description Error</span>
                 </div>
                 <div class="row" style="margin-top: 10px">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <span class="badge badge-primary">Choose bug severity</span>
                         <select class="form-control form-control-sm" th:field="*{severity}">
                             <option th:value="LOW">LOW</option>
@@ -63,5 +66,26 @@
         </div>
     </div>
 </div>
+<!--ticket information after it is COMPLETED-->
+<div class="container" th:object="${ticket}" th:if="${ticket.status=='COMPLETED'}">
+    <div class="card text-center">
+        <div class="card-header border-danger">
+            <h4 th:text="${ticket.name}"></h4>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title" th:text="${'Created By: '+ticketCreatedBy}"></h5>
+            <p class="card-text font-weight-bold" th:text="${ticket.description}"></p>
+
+            <h5 class="text-success" th:text="${'This Ticket Has Been Set As Completed By: '+ticketAssignedTo}"></h5>
+        </div>
+        <div class="card-footer border-danger text-muted" th:text="${'Date Created: '+ticket.createdDate}">
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#bugTable').DataTable();
+    } );
+</script>
 </body>
 </html>

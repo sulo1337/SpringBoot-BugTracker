@@ -36,3 +36,16 @@ function setInputFilter(textbox, inputFilter) {
         });
     });
 }
+
+
+function startProject(){
+
+            iziToast.show({
+                title: 'Success',
+                message: 'Provided email address is valid',
+                position: 'topRight',
+                timeout: 500000,
+                color: 'green'
+            });
+
+}

@@ -10,71 +10,97 @@
 
 <div class="container">
     <form action="/board/manager/projects/save" th:object="${project}" method="POST">
-        <div class="form-group row">
-            <div class="col-sm-2">
-                <input type="hidden" th:field="${project.projectId}">
-                <span class="badge badge-primary">enter project name</span>
-                <input class="form-control form-control-sm" type="text" placeholder="Project Name"
-                       th:field="${project.name}">
-                <span class="badge badge-danger" th:if="${#fields.hasErrors('name')}"
-                      th:errors="*{name}">Name Error</span>
-            </div>
-            <div class="col-sm-4">
-                <span class="badge badge-primary">enter project description</span>
-                <textarea class="form-control" placeholder="Enter Project Description" th:field="${project.description}"
-                          style="resize: none"></textarea>
-                <span class="badge badge-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">description Error</span>
-            </div>
-            <div class="col-sm-4">
-                <span class="badge badge-primary">assign employees</span>
-                <select class="form-control form-control-sm selectpicker" data-live-search="true" th:field="*{employees}" multiple>
-                    <optgroup label="Programmers">
-                        <option th:each="employee: ${programmerEmployees}"
-                                th:value="${employee.employeeId}"
-                                th:text="${employee.firstName}"
-                        >
-                        </option>
-                    </optgroup>
-                    <optgroup label="Testers">
-                        <option th:each="employee: ${testerEmployees}"
-                                th:value="${employee.employeeId}"
-                                th:text="${employee.firstName}"
-                        >
-                        </option>
-                    </optgroup>
-                </select>
-                <span class="badge badge-danger" th:if="${#fields.hasErrors('employees')}" th:errors="*{employees}">employees Error</span>
-            </div>
-        </div>
-        <div class="form-group row">
-
-            <div class="list-group">
-                <span class="badge badge-primary">choose project deadline</span>
-                <div class="list-group-item list-group-item-action d-flex">
-                    <div class="p-2 flex-grow-1">
-                        <input id="dp3" th:field="${project.deadline}" />
-                    </div>
+        <div >
+            <div class="card bg-dark text-white">
+                <div class="card-header border-success" th:if="${newOrOld!='old'}">
+                    <i class="fas fa-folder-plus"></i> New Project
                 </div>
-                <span class="badge badge-danger" th:if="${#fields.hasErrors('deadline')}" th:errors="*{deadline}">deadline Error</span>
+                <div class="card-header border-success" th:if="${newOrOld=='old'}">
+                    <i class="fas fa-edit"></i> Update Project
+                </div>
             </div>
-        </div>
-        <div th:if="${newOrOld=='old'}" class="form-group-row">
-            <input  class="form-control form-control-sm" type="hidden" th:value="${project.status}"
-                   th:field="${project.status}" readonly>
-            <span class="badge badge-danger" th:if="${#fields.hasErrors('status')}"
-                  th:errors="*{status}">status Error</span>
-        </div>
-        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-        <div class="col-sm-4">
-            <button class="btn btn-success" type="submit">Submit</button>
+            <div class="card-block" style="padding: 24px;">
+                <fieldset>
+                    <!--name and desc div-->
+                    <div class="group-from row">
+                        <!--name div-->
+                        <div class="form-group col-md-4">
+                            <input type="hidden" th:field="${project.projectId}">
+                            <span class="badge badge-primary">enter project name</span>
+                            <input class="form-control form-control-sm" type="text" placeholder="Project Name"
+                                   th:field="${project.name}">
+                            <span class="badge badge-danger" th:if="${#fields.hasErrors('name')}"
+                                  th:errors="*{name}">Name Error</span>
+                        </div>
+                        <!--description div-->
+                        <div class="form-group col-md-8">
+                            <span class="badge badge-primary">enter project description</span>
+                            <textarea class="form-control" placeholder="Enter Project Description"
+                                      th:field="${project.description}"
+                                      style="resize: none"></textarea>
+                            <span class="badge badge-danger" th:if="${#fields.hasErrors('description')}"
+                                  th:errors="*{description}">description Error</span>
+                        </div>
+                    </div>
+                    <!--deadline and employees div-->
+                    <div class="form-group row">
+                        <!--deadline div-->
+                        <div class="form-group col-md-4">
+                            <span class="badge badge-primary">choose project deadline</span>
+                            <div class="list-group-item">
+                                <div class="p-1 flex-grow-1">
+                                    <input id="dp3" th:field="${project.deadline}"/>
+                                </div>
+                            </div>
+                            <span class="badge badge-danger" th:if="${#fields.hasErrors('deadline')}"
+                                  th:errors="*{deadline}">deadline Error</span>
+                        </div>
+                        <!--employees div-->
+                        <div class="form-group col-md-8">
+                            <span class="badge badge-primary">assign employees</span>
+                            <select class="form-control form-control-sm selectpicker" data-live-search="true" th:field="*{employees}" multiple>
+                                <optgroup label="Programmers">
+                                    <option th:each="employee: ${programmerEmployees}"
+                                            th:value="${employee.employeeId}"
+                                            th:text="${employee.firstName}"
+                                    >
+                                    </option>
+                                </optgroup>
+                                <optgroup label="Testers">
+                                    <option th:each="employee: ${testerEmployees}"
+                                            th:value="${employee.employeeId}"
+                                            th:text="${employee.firstName}"
+                                    >
+                                    </option>
+                                </optgroup>
+                            </select>
+                            <span class="badge badge-danger" th:if="${#fields.hasErrors('employees')}" th:errors="*{employees}">employees Error</span>
+                        </div>
+                    </div>
+                </fieldset>
+                <!--submit button-->
+                <div class="col-md-2" th:if="${newOrOld!='old'}">
+                    <button class="btn btn-success" type="submit">Create Project</button>
+                </div>
+                <div class="col-md-2" th:if="${newOrOld=='old'}">
+                    <button class="btn btn-success" type="submit">Update Project</button>
+                </div>
+            </div>
+            <!--hidden fields needed-->
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+            <div th:if="${newOrOld=='old'}" class="form-group-row">
+                <input  class="form-control form-control-sm" type="hidden" th:value="${project.status}"
+                        th:field="${project.status}" readonly>
+                <span class="badge badge-danger" th:if="${#fields.hasErrors('status')}"
+                      th:errors="*{status}">status Error</span>
+            </div>
         </div>
     </form>
-
 </div>
 <script type="text/javascript">
     $('#dp3').datepicker({
         format: 'yyyy-mm-dd',
-        minDate : 0,
+        minDate: 0,
         startDate: new Date()
     });
 </script>

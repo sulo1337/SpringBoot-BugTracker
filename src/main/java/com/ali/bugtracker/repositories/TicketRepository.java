@@ -13,6 +13,7 @@ import java.util.List;
 public interface TicketRepository extends CrudRepository<Ticket,Long> {
      List<Ticket> findAllByOwner(Employee owner);
      Long countTicketsByOwner(Employee owner);
+     Long countTicketsByProjectIdAndStatus(Project projectId,String status);
      List<Ticket> findAllByProjectId(Project projectId);
      Ticket findTicketByTicketId(Long id);
      List<Ticket> findAllByEmployeeIdAndProjectId(Employee employeeId,Project projectId);

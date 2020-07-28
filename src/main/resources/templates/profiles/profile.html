@@ -18,54 +18,56 @@
                         <br>
                     </div>
                 </div>
-                <table class="table table-user-information">
-                    <tbody>
-                    <tr>
-                        <td>Role:</td>
-                        <td th:text="${role}"></td>
-                    </tr>
-                    <tr>
-                        <td>First Name:</td>
-                        <td th:text="${currentUser.firstName}"></td>
-                    </tr>
-                    <tr>
-                        <td>Last Name:</td>
-                        <td th:text="${currentUser.lastName}"></td>
-                    </tr>
-                    <tr>
-                        <td>Email:</td>
-                        <td><a th:text="${currentUser.email}"></a></td>
-                    </tr>
-                    <!--if user is a programmer or tester only-->
-                    <tr sec:authorize="hasAnyRole('ROLE_P','ROLE_T')">
-                        <td>Total Number Of Projects:</td>
-                        <td th:text="${currentUser.projects.size()}"></td>
-                    </tr>
-                    <tr sec:authorize="hasRole('ROLE_P')">
-                        <td>Total Number Of Tickets:</td>
-                        <td th:text="${currentUser.tickets.size()}"></td>
-                    </tr>
-                    <tr sec:authorize="hasRole('ROLE_T')">
-                        <td>Total Number Of Created Bugs:</td>
-                        <td th:text="${currentUser.bugs.size()}"></td>
-                    </tr>
-                    <tr sec:authorize="hasRole('ROLE_P')">
-                        <td>Total Number Of Comments:</td>
-                        <td th:text="${currentUser.comments.size()}"></td>
-                    </tr>
-                    <!---->
-                    <!--if user is a project manager-->
-                    <tr sec:authorize="hasRole('ROLE_M')">
-                        <td>Total Created Projects:</td>
-                        <td th:text="${numberOfManagerProjects}"></td>
-                    </tr>
-                    <tr sec:authorize="hasRole('ROLE_M')">
-                        <td>Total Created Tickets:</td>
-                        <td th:text="${numberOfManagerTickets}"></td>
-                    </tr>
-                    <!---->
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-user-information">
+                        <tbody>
+                        <tr>
+                            <td>Role:</td>
+                            <td th:text="${role}"></td>
+                        </tr>
+                        <tr>
+                            <td>First Name:</td>
+                            <td th:text="${currentUser.firstName}"></td>
+                        </tr>
+                        <tr>
+                            <td>Last Name:</td>
+                            <td th:text="${currentUser.lastName}"></td>
+                        </tr>
+                        <tr>
+                            <td>Email:</td>
+                            <td><a th:text="${currentUser.email}"></a></td>
+                        </tr>
+                        <!--if user is a programmer or tester only-->
+                        <tr sec:authorize="hasAnyRole('ROLE_P','ROLE_T')">
+                            <td>Total Number Of Projects:</td>
+                            <td th:text="${currentUser.projects.size()}"></td>
+                        </tr>
+                        <tr sec:authorize="hasRole('ROLE_P')">
+                            <td>Total Number Of Tickets:</td>
+                            <td th:text="${currentUser.tickets.size()}"></td>
+                        </tr>
+                        <tr sec:authorize="hasRole('ROLE_T')">
+                            <td>Total Number Of Created Bugs:</td>
+                            <td th:text="${currentUser.bugs.size()}"></td>
+                        </tr>
+                        <tr sec:authorize="hasRole('ROLE_P')">
+                            <td>Total Number Of Comments:</td>
+                            <td th:text="${currentUser.comments.size()}"></td>
+                        </tr>
+                        <!---->
+                        <!--if user is a project manager-->
+                        <tr sec:authorize="hasRole('ROLE_M')">
+                            <td>Total Created Projects:</td>
+                            <td th:text="${numberOfManagerProjects}"></td>
+                        </tr>
+                        <tr sec:authorize="hasRole('ROLE_M')">
+                            <td>Total Created Tickets:</td>
+                            <td th:text="${numberOfManagerTickets}"></td>
+                        </tr>
+                        <!---->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="col-md-4">

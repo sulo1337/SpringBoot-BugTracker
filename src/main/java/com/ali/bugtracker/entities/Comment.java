@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter @NoArgsConstructor
-public class Comment extends Auditable <Comment> {
+public class Comment extends Auditable <String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long commentId;

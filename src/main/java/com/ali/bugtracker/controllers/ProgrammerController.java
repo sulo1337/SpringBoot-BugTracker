@@ -44,6 +44,8 @@ public class ProgrammerController {
             ticketsCount.put(project.getProjectId(), ticketService.countTicketsByProjectIdAndEmployeeId(project, currentProgrammer));
 
         }
+        String currentProgrammerName=currentProgrammer.getFirstName()+"'s";
+        model.addAttribute("currentProgrammerName",currentProgrammerName);
         model.addAttribute("currentProgrammer", currentProgrammer);
         model.addAttribute("ticketsCount", ticketsCount);
         model.addAttribute("allProjects", allProjects);
@@ -104,10 +106,13 @@ public class ProgrammerController {
                 Comment comment = new Comment();
                 Employee employee = ticket.getOwner();
                 String ownerName = employee.getFirstName() + " " + employee.getLastName();
+                Employee assignedProgrammer = ticket.getEmployeeId();
+                String ticketAssignedTo = assignedProgrammer.getFirstName() + " " + assignedProgrammer.getLastName();
                 List<Comment> comments = ticket.getComments();
                 List<Bug> bugs = ticket.getBugs();
                 model.addAttribute("ticket", ticket);
                 model.addAttribute("project", project);
+                model.addAttribute("ticketAssignedTo",ticketAssignedTo);
                 model.addAttribute("ticketCreatedBy", ownerName);
                 model.addAttribute("comments", comments);
                 model.addAttribute("bugs", bugs);
@@ -157,6 +162,19 @@ public class ProgrammerController {
                 historyService.save(history);
                 return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
                 }
+                else if (ticket.getStatus().equals("COMPLETED")){
+                    ticket.setStatus("SUBMITTED FOR TESTING");
+                    // history fields
+                    History history = new History();
+                    history.setTicketId(ticket);
+                    history.setEmployeeId(currentProgrammer);
+                    history.setEvent("REOPENED");
+                    history.setModificationDate(historyService.currentDate());
+                    // save changes
+                    ticketService.save(ticket);
+                    historyService.save(history);
+                    return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
+                }
                 else return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
             }
         } else return "redirect:/board/programmer";
@@ -164,7 +182,7 @@ public class ProgrammerController {
 
     //submit for testing a ticket
     @GetMapping("/projects/tickets/submitToTest")
-    public String submitToTest(@RequestParam("prId") Long projectId, @RequestParam("tId") Long ticketId, Principal principal) {
+    public String submitTicketToTest(@RequestParam("prId") Long projectId, @RequestParam("tId") Long ticketId, Principal principal) {
         Ticket ticket = ticketService.findTicketByTicketId(ticketId);
         if (ticket != null) {
             Employee currentProgrammer = employeeService.findByEmail(principal.getName());
@@ -184,12 +202,39 @@ public class ProgrammerController {
                 ticketService.save(ticket);
                 historyService.save(history);
                 return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
-                }else return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
+                }
+                else return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
             }
         } else return "redirect:/board/programmer";
     }
 
-    // display bug details apge
+    @GetMapping("/projects/tickets/complete")
+    public String completeTicket(@RequestParam("prId") Long projectId, @RequestParam("tId") Long ticketId, Principal principal) {
+        Ticket ticket = ticketService.findTicketByTicketId(ticketId);
+        if (ticket != null && ticket.getStatus().equals("SUBMITTED FOR TESTING")) {
+            Employee currentProgrammer = employeeService.findByEmail(principal.getName());
+            Employee programmerAssignedTo = ticket.getEmployeeId();
+            if (currentProgrammer != programmerAssignedTo) {
+                return "redirect:/board/programmer";
+            } else {
+                    ticket.setStatus("COMPLETED");
+                    // history fields
+                    History history = new History();
+                    history.setTicketId(ticket);
+                    history.setEmployeeId(currentProgrammer);
+                    history.setEvent("COMPLETED");
+                    history.setModificationDate(historyService.currentDate());
+                    // save changes
+                    ticketService.save(ticket);
+                    historyService.save(history);
+                    return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
+            }
+        } else return "redirect:/board/programmer";
+
+
+    }
+
+    // display bug details page
     @GetMapping("/projects/{projectId}/tickets/{ticketId}/bugs/{bugId}")
     public String displayBugDetails(@PathVariable Long projectId, @PathVariable Long ticketId, @PathVariable Long bugId, Model model, Principal principal) {
         Ticket ticket = ticketService.findTicketByTicketId(ticketId);

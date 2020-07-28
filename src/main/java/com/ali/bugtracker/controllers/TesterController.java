@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/board/tester")
@@ -40,6 +42,14 @@ public class TesterController {
     public String displayTesterBoard(Principal principal, Model model) {
         Employee tester = employeeService.findByEmail(principal.getName());
         List<Project> projects = tester.getProjects();
+        HashMap<Long,Long> projectsTicketsToTest=new HashMap<>();
+       for (Project project :projects){
+           Long count= ticketService.countTicketsByProjectIdAndStatus(project,"SUBMITTED FOR TESTING");
+           projectsTicketsToTest.put(project.getProjectId(),count );
+       }
+        String currentTesterName=tester.getFirstName()+"'s";;
+        model.addAttribute("currentTesterName",currentTesterName);
+        model.addAttribute("projectsTicketsToTest",projectsTicketsToTest);
         model.addAttribute("projects", projects);
         return "boards/tester-board";
     }
@@ -84,6 +94,12 @@ public class TesterController {
             } else {
                 List<Bug> allBugs = bugService.findBugsByTicketId(ticket);
                 Bug bug = new Bug();
+                Employee employee = ticket.getOwner();
+                String ownerName = employee.getFirstName() + " " + employee.getLastName();
+                Employee assignedProgrammer = ticket.getEmployeeId();
+                String ticketAssignedTo = assignedProgrammer.getFirstName() + " " + assignedProgrammer.getLastName();
+                model.addAttribute("ticketAssignedTo",ticketAssignedTo);
+                model.addAttribute("ticketCreatedBy", ownerName);
                 model.addAttribute("bug", bug);
                 model.addAttribute("ticket", ticket);
                 model.addAttribute("allBugs", allBugs);

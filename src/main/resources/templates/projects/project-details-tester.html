@@ -6,10 +6,17 @@
 </head>
 <header th:replace="layouts::nav"></header>
 <body>
-<div class="container ">
+<div class="container">
+    <h2 class="text-left text-secondary font-weight-bold" th:text="${project.name+' Tickets'}"></h2>
+    <div class="row col-md-4">
+        <input id="searchInput" class="form-control form-control-sm border-primary" type="text"
+               placeholder="Search Ticket Name"
+               aria-label="Search">
+    </div>
+    <br>
     <div class="row">
-        <div th:each="ticket:${submittedTickets}" class="col-md-4">
-            <div class="card text-white bg-dark mb-3" >
+        <div th:each="ticket:${submittedTickets}" class="col-md-4 tickets" th:title="${ticket.name}">
+            <div class="card text-white bg-dark mb-3">
                 <div class="card-header bg-transparent border-success">
                     <h3 class="text-white" th:text="${ticket.name}"></h3>
                 </div>
@@ -17,16 +24,28 @@
                     <h5 class="card-title" th:text="${ticket.status}"></h5>
                     <p class="card-text" th:text="${ticket.description}"></p>
                 </div>
-                <div class="card-footer bg-transparent border-success" >
-                    <h6 class="text-secondary" >Created By </h6>
+                <div class="card-footer bg-transparent border-success">
+                    <h6 class="text-secondary">Created By </h6>
                     <h6 class="text-success" th:text="${ownerName}"></h6>
                 </div>
-                <div class="card-footer bg-transparent border-success" >
-                    <a th:href="@{'/board/tester/projects/'+${projectId}+'/tickets/'+${ticket.ticketId}}" class="btn btn-secondary"> more details</a>
+                <div class="card-footer bg-transparent border-success">
+                    <a th:href="@{'/board/tester/projects/'+${projectId}+'/tickets/'+${ticket.ticketId}}"
+                       class="btn btn-secondary"> more details</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $("#searchInput").on("keyup", function () {
+            if ($(this).val()) {
+                var value = $(this).val().toLowerCase();
+                $('.tickets').hide();
+                $("[title*='" + value + "']").show();
+            } else $('.tickets').show();
+        });
+    });
+</script>
 </body>
 </html>

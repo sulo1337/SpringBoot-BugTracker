@@ -5,12 +5,14 @@
     <title>ticket Details</title>
     <header th:replace="layouts::nav"></header>
 <body>
-<div class="container">
+<!--ticket information before its completed-->
+<div class="container" th:object="${ticket}" th:if="${ticket.status!='COMPLETED'}">
     <div class="row">
         <div class="col-md-4">
-            <div th:object="${ticket}" class="card text-white bg-dark mb-3">
+            <div  class="card text-white bg-dark mb-3">
                 <div class="card-header bg-transparent border-success">
                     <h3 class="text-white" th:text="${ticket.name}"></h3>
+
                 </div>
                 <div class="card-body text-success">
                     <h5 class="card-title" th:text="${ticket.status}"></h5>
@@ -22,6 +24,10 @@
                     <h6 sec:authorize="hasAnyRole('ROLE_P','ROLE_T')" class="text-secondary">Created By </h6>
                     <h6 sec:authorize="hasAnyRole('ROLE_P','ROLE_T')" class="text-success"
                         th:text="${ticketCreatedBy}"></h6>
+                </div>
+                <div sec:authorize="hasRole('ROLE_P')" th:if="${ticket.status=='SUBMITTED FOR TESTING'}"  class="card-footer bg-transparent border-success text-left">
+                    <a th:href="@{/board/programmer/projects/tickets/complete(prId=${projectId},tId=${ticketId})}"
+                       onclick="if (!(confirm('Mark Ticket As Completed ?'))) return false" class="btn btn-sm btn-success">Mark As Completed ?</a>
                 </div>
             </div>
             <div sec:authorize="hasRole('ROLE_P')">
@@ -45,7 +51,7 @@
         <div class="col-md-8">
             <h2 th:if="${ticket.comments.size()!=0}" class="text-center">Comments Table</h2>
             <div class="table-responsive">
-                <table th:if="${ticket.comments.size()!=0}"
+                <table id="commentTable" th:if="${ticket.comments.size()!=0}"
                        class="table table-sm table-dark table-bordered table-striped">
                     <thead class="thead-dark">
                     <tr>
@@ -66,7 +72,7 @@
             <!--bug table-->
             <h2 th:if="${ticket.bugs.size()!=0}" class="text-center">Bugs Table</h2>
             <div class="table-responsive">
-                <table th:if="${ticket.bugs.size()!=0}" class="table table-sm table-dark table-bordered table-striped">
+                <table id="bugTable" th:if="${ticket.bugs.size()!=0}" class="table table-sm table-dark table-bordered table-striped">
                     <thead class="thead-dark">
                     <tr>
                         <th>Bug</th>
@@ -144,5 +150,30 @@
     </div>
 </div>
 
+
+<!--ticket information after it is COMPLETED-->
+<div class="container" th:object="${ticket}" th:if="${ticket.status=='COMPLETED'}">
+    <div class="card text-center">
+        <div class="card-header border-danger">
+            <h4 th:text="${ticket.name}"></h4>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title" th:text="${'Created By: '+ticketCreatedBy}"></h5>
+            <p class="card-text font-weight-bold" th:text="${ticket.description}"></p>
+            <h5 class="text-success" th:text="${'This Ticket Has Been Set As Completed By: '+ticketAssignedTo}"></h5>
+            <a th:href="@{/board/programmer/projects/tickets/start(prId=${projectId},tId=${ticketId})}"
+               onclick="if (!(confirm('Re-open The Ticket ?'))) return false" class="btn btn-success">Reopen Ticket ?</a>
+        </div>
+        <div class="card-footer border-danger text-muted" th:text="${'Date Created: '+ticket.createdDate}">
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#commentTable').DataTable();
+        $('#bugTable').DataTable();
+    } );
+</script>
 </body>
 </html>
