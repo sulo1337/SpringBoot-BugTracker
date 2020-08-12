@@ -11,13 +11,18 @@ import com.ali.bugtracker.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +32,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/board/tester")
 public class TesterController {
+
+    private final String UPLOAD_DIR = "./src/main/resources/static/images/";
 
     @Autowired
     TicketService ticketService;
@@ -42,14 +49,15 @@ public class TesterController {
     public String displayTesterBoard(Principal principal, Model model) {
         Employee tester = employeeService.findByEmail(principal.getName());
         List<Project> projects = tester.getProjects();
-        HashMap<Long,Long> projectsTicketsToTest=new HashMap<>();
-       for (Project project :projects){
-           Long count= ticketService.countTicketsByProjectIdAndStatus(project,"SUBMITTED FOR TESTING");
-           projectsTicketsToTest.put(project.getProjectId(),count );
-       }
-        String currentTesterName=tester.getFirstName()+"'s";;
-        model.addAttribute("currentTesterName",currentTesterName);
-        model.addAttribute("projectsTicketsToTest",projectsTicketsToTest);
+        HashMap<Long, Long> projectsTicketsToTest = new HashMap<>();
+        for (Project project : projects) {
+            Long count = ticketService.countTicketsByProjectIdAndStatus(project, "SUBMITTED FOR TESTING");
+            projectsTicketsToTest.put(project.getProjectId(), count);
+        }
+        String currentTesterName = tester.getFirstName() + "'s";
+        ;
+        model.addAttribute("currentTesterName", currentTesterName);
+        model.addAttribute("projectsTicketsToTest", projectsTicketsToTest);
         model.addAttribute("projects", projects);
         return "boards/tester-board";
     }
@@ -71,9 +79,6 @@ public class TesterController {
                 for (Ticket ticket : allTickets) {
                     if (ticket.getStatus().equals("SUBMITTED FOR TESTING")) submittedTickets.add(ticket);
                 }
-                Employee owner = project.getOwner();
-                String ownerName = owner.getFirstName() + " " + owner.getLastName();
-                model.addAttribute("ownerName", ownerName);
                 model.addAttribute("submittedTickets", submittedTickets);
                 model.addAttribute("project", project);
                 return "projects/project-details-tester";
@@ -86,7 +91,7 @@ public class TesterController {
     public String displayTicketDetails(@PathVariable Long projectId, @PathVariable Long ticketId, Principal principal, Model model) {
         Project project = projectService.findByProjectId(projectId);
         Ticket ticket = ticketService.findTicketByTicketId(ticketId);
-        if (project != null && ticket!=null) {
+        if (project != null && ticket != null) {
             Employee currentTester = employeeService.findByEmail(principal.getName());
             // prevent tester from going to other testers tickets
             if (!project.getEmployees().contains(currentTester) || !ticket.getStatus().equals("SUBMITTED FOR TESTING")) {
@@ -94,12 +99,6 @@ public class TesterController {
             } else {
                 List<Bug> allBugs = bugService.findBugsByTicketId(ticket);
                 Bug bug = new Bug();
-                Employee employee = ticket.getOwner();
-                String ownerName = employee.getFirstName() + " " + employee.getLastName();
-                Employee assignedProgrammer = ticket.getEmployeeId();
-                String ticketAssignedTo = assignedProgrammer.getFirstName() + " " + assignedProgrammer.getLastName();
-                model.addAttribute("ticketAssignedTo",ticketAssignedTo);
-                model.addAttribute("ticketCreatedBy", ownerName);
                 model.addAttribute("bug", bug);
                 model.addAttribute("ticket", ticket);
                 model.addAttribute("allBugs", allBugs);
@@ -109,32 +108,50 @@ public class TesterController {
     }
 
     @PostMapping("/projects/{projectId}/tickets/{ticketId}/bug/save")
-    public String addNewBug(@Valid Bug bug, BindingResult bindingResult, Model model, Principal principal, @PathVariable Long projectId, @PathVariable Long ticketId) {
+    public String addNewBug(@Valid Bug bug, BindingResult bindingResult, Model model, Principal principal, @PathVariable Long projectId, @PathVariable Long ticketId, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
         Project project = projectService.findByProjectId(projectId);
         Ticket ticket = ticketService.findTicketByTicketId(ticketId);
-        if (project != null && ticket!=null ) {
+        if (project != null && ticket != null) {
             Employee currentTester = employeeService.findByEmail(principal.getName());
             // prevent tester from saving bugs in other testers tickets
-           if (!project.getEmployees().contains(currentTester) || !ticket.getStatus().equals("SUBMITTED FOR TESTING")){
-               return "redirect:/board/tester";
-           }
-           else {
-               if (bindingResult.hasErrors()) {
-                   List<Bug> allBugs = bugService.findBugsByTicketId(ticket);
-                   model.addAttribute("ticket", ticket);
-                   model.addAttribute("allBugs", allBugs);
-                   return "tickets/ticket-details-tester";
-               } else {
-                   Employee tester = employeeService.findByEmail(principal.getName());
-                   bug.setEmployeeId(tester);
-                   bug.setFixed(false);
-                   bug.setTicketId(ticket);
-                   bugService.save(bug);
-                   return "redirect:/board/tester/projects/{projectId}/tickets/{ticketId}?success";
-               }
-           }
+            if (!project.getEmployees().contains(currentTester) || !ticket.getStatus().equals("SUBMITTED FOR TESTING")) {
+                return "redirect:/board/tester";
+            } else {
+                String imagePath="";
+                // normalize the file path
+                String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+                String fileContentType=file.getContentType();
+                String type=fileContentType.substring(0, fileContentType.indexOf("/"));
+                if (bindingResult.hasErrors()||!type.equals("image")) {
+                    List<Bug> allBugs = bugService.findBugsByTicketId(ticket);
+                    model.addAttribute("ticket", ticket);
+                    model.addAttribute("allBugs", allBugs);
+                    model.addAttribute("imageError","only images allowed, check your file");
+                    return "tickets/ticket-details-tester";
+                } else {
+                    Employee tester = employeeService.findByEmail(principal.getName());
+
+                    // save the file on the local file system
+                    try {
+                        Path path = Paths.get(UPLOAD_DIR + fileName);
+                        Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+                        imagePath="/images/"+fileName;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    bug.setEmployeeId(tester);
+                    bug.setFixed(false);
+                    bug.setImagePath(imagePath);
+                    bug.setTicketId(ticket);
+                    bugService.save(bug);
+                    redirectAttributes.addFlashAttribute("bugSaved",true);
+                    return "redirect:/board/tester/projects/{projectId}/tickets/{ticketId}";
+                }
+            }
         } else return "redirect:/board/tester";
 
     }
+
+
 }
 

@@ -7,6 +7,189 @@
 <header th:replace="layouts::nav"></header>
 
 <body>
-Admin board
+<div class="container">
+    <!--errors and success-->
+    <div class="row ">
+        <div th:if="${param.error}" class="alert alert-danger">
+            Something went wrong !!!!!
+        </div>
+        <!-- Thymeleaf + Spring Security success display -->
+        <div th:if="${param.success}" class="alert alert-success">
+            Entry Deleted Successfully
+        </div>
+    </div>
+    <!--employees and projects-->
+    <div class="row">
+        <!--employees-->
+        <div class="col-md-12">
+            <h4 class="text-center text-secondary font-weight-bold">All Employees</h4>
+            <div class="table-responsive" style="margin-bottom: 1%">
+                <table id="employeesTable" class="table table-sm table-dark table-bordered table-striped ">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Enabled</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="employee: ${employeeList}" >
+                        <td th:text="${employee.firstName}"></td>
+                        <td th:text="${employee.lastName}"></td>
+                        <td th:text="${employee.email}" ></td>
+                        <td th:text="${employee.enabled}"></td>
+                        <td th:text="${employee.role}" ></td>
+                        <td><a th:href="@{/board/admin/employee/delete(empId=${employee.employeeId})}"
+                                onclick="if (!(confirm('Are you sure you want to delete ?'))) return false"
+                                class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!--projects-->
+        <div class="col-md-12">
+            <h4 class="text-center text-secondary font-weight-bold" >All Projects</h4>
+            <div class="table-responsive" style="margin-bottom: 1%">
+                <table id="projectsTable" class="table table-sm table-light table-bordered table-striped ">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Stage</th>
+                        <th>Employees</th>
+                        <th>tickets</th>
+                        <th>Owner</th>
+                        <th>Deadline</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="project: ${projectList}" >
+                        <td th:text="${project.name}"></td>
+                        <td th:text="${project.status}"></td>
+                        <td th:text="${project.employees.size()}"></td>
+                        <td th:text="${project.tickets.size()}"></td>
+                        <td th:text="${project.getOwner().getFirstName()+' '+project.getOwner().getLastName()}" ></td>
+                        <td th:text="${project.deadline}"></td>
+                        <td><a th:href="@{/board/admin/project/delete(prId=${project.projectId})}"
+                                onclick="if (!(confirm('Are you sure you want to delete ?'))) return false"
+                                class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--tickets and bugs-->
+    <div class="row">
+        <!--tickets-->
+        <div class="col-md-12">
+            <h4 class="text-center text-secondary font-weight-bold" >All Tickets</h4>
+            <div class="table-responsive" style="margin-bottom: 1%">
+                <table id="ticketsTable" class="table table-sm table-dark table-bordered table-striped ">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Priority</th>
+                        <th>Stage</th>
+                        <th>Assigned Employee</th>
+                        <th>From project</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="ticket: ${ticketList}">
+                        <td th:text="${ticket.name}"></td>
+                        <td th:text="${ticket.priority}"></td>
+                        <td th:text="${ticket.status}"></td>
+                        <td th:text="${ticket.getEmployeeId().getFirstName()+' '+ticket.getEmployeeId().getLastName()}"></td>
+                        <td th:text="${ticket.getProjectId().getName()}"></td>
+                        <td><a th:href="@{/board/admin/ticket/delete(ticketId=${ticket.ticketId})}"
+                                onclick="if (!(confirm('Are you sure you want to delete ?'))) return false"
+                                class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+        <!--bugs-->
+    <div class="row">
+        <div class="col-md-12">
+            <h4 class="text-center text-secondary font-weight-bold" >All Bugs</h4>
+            <div class="table-responsive" style="margin-bottom: 1%">
+                <table id="bugsTable" class="table table-sm table-light table-bordered table-striped ">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Description</th>
+                        <th>Severity</th>
+                        <th>Created By</th>
+                        <th>From Ticket</th>
+                        <th>Fixed</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr  th:each="bug: ${bugList}">
+                        <td th:text="${bug.description}"></td>
+                        <td th:text="${bug.severity}"></td>
+                        <td th:text="${bug.getEmployeeId().getFirstName()+' '+bug.getEmployeeId().getLastName()}"></td>
+                        <td th:text="${bug.getTicketId().getName()}"></td>
+                        <td th:text="${bug.fixed}"></td>
+                        <td><a th:href="@{/board/admin/bug/delete(bugId=${bug.bugId})}"
+                                onclick="if (!(confirm('Are you sure you want to delete ?'))) return false"
+                                class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--histories-->
+    <div class="row">
+        <div class="col-md-12 ">
+            <h4 class="text-center text-secondary font-weight-bold" >Tickets History</h4>
+            <div class="table-responsive" style="margin-bottom: 1%">
+                <table id="historyTable" class="table table-sm table-dark table-bordered table-striped ">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Date</th>
+                        <th>Event</th>
+                        <th>On Ticket</th>
+                        <th>modified By</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr  th:each="history: ${historyList}">
+                        <td th:text="${history.modificationDate}"></td>
+                        <td th:text="${history.event}"></td>
+                        <td th:text="${history.getTicketId().getName()}"></td>
+                        <td th:text="${history.getEmployeeId().getFirstName()+' '+history.getEmployeeId().getLastName()}"></td>
+                        <td><a th:href="@{/board/admin/history/delete(historyId=${history.historyId})}"
+                                onclick="if (!(confirm('Are you sure you want to delete ?'))) return false"
+                                class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#employeesTable').DataTable();
+        $('#projectsTable').DataTable();
+        $('#ticketsTable').DataTable();
+        $('#bugsTable').DataTable();
+        $('#historyTable').DataTable();
+
+    } );
+</script>
 </body>
 </html>

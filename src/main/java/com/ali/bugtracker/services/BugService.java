@@ -16,11 +16,26 @@ public class BugService {
     @Autowired
     BugRepository bugRepo;
 
-   public List<Bug> findBugsByTicketId(Ticket ticket){ return bugRepo.findBugsByTicketId(ticket); }
-   public void save(Bug bug){ bugRepo.save(bug);}
-   public Bug findBugByBugId(Long bugId){ return bugRepo.findBugByBugId(bugId);}
-   public List<ChartData> getBugSeverity(Long employeeId){
-       return bugRepo.getBugSeverity(employeeId);
-   }
+    public List<Bug> findAll() {
+        return bugRepo.findAll();
+    }
+
+    public List<Bug> findBugsByTicketId(Ticket ticket) {
+        return bugRepo.findBugsByTicketId(ticket);
+    }
+
+    public void save(Bug bug) {
+        bugRepo.save(bug);
+    }
+    public void delete(Bug bug){
+        bugRepo.delete(bug);
+    }
+    public Bug findBugByBugId(Long bugId) {
+        return bugRepo.findBugByBugId(bugId);
+    }
+
+    public List<ChartData> getBugSeverity(Long employeeId) {
+        return bugRepo.getBugSeverity(employeeId);
+    }
 
 }

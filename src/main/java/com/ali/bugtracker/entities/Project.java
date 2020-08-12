@@ -9,10 +9,7 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -32,8 +29,10 @@ public class Project extends Auditable<String> {
     private Employee owner;
 
     @NotBlank(message = "name is empty")
+    @Size(min = 1,max = 99)
     private String name;
     @NotBlank(message = "description is empty")
+    @Size(min = 1,max = 495)
     private String description;
     @TimeFormat
     @FutureDate

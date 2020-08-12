@@ -35,13 +35,22 @@
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
     <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css"/>
+   <!--toast message-->
+    <link rel='stylesheet' href='/webjars/izitoast/1.2.0/dist/css/iziToast.css'>
+    <script src="/webjars/izitoast/1.2.0/dist/js/iziToast.js"></script>
+    <!---->
+    <style>@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@700&display=swap');
+    body{
+        font-family: 'Raleway', sans-serif;
 
+    }
+    </style>
 </head>
 <body>
 <!-- Fragment #2 : Navbar contains nav links -->
 <div th:fragment="nav" style="margin-bottom: 1%">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-        <h4  class="navbar-brand">Bug Tracker</h4>
+        <span  class="navbar-brand">Bug Tracker</span>
         <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>

@@ -9,12 +9,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Controller
@@ -37,9 +40,21 @@ public class ManagerController {
     public String displayManagerBoard(Model model, Principal principal) {
         Employee currentManager = employeeService.findByEmail(principal.getName());
         List<Project> projects = projectService.findAllByOwner(currentManager);
+        HashMap<Long,Long> projectUncompletedTickets=new HashMap<>();
+        for (Project project:projects){
+            Long count=0L;
+            List<Ticket> tickets=project.getTickets();
+            for (Ticket ticket:tickets){
+                if (!ticket.getStatus().equals("COMPLETED")||ticket.getStatus()!=null){
+                    count++;
+                }
+            }
+            projectUncompletedTickets.put(project.getProjectId(),count);
+        }
         String managerName=currentManager.getFirstName()+"'s";
         model.addAttribute("projects", projects);
         model.addAttribute("managerName",managerName);
+        model.addAttribute("projectUncompletedTickets",projectUncompletedTickets);
         return "boards/manager-board";
     }
 
@@ -57,27 +72,30 @@ public class ManagerController {
     }
 
 
-    // save new project
+    // save a project
     @PostMapping("/projects/save")
-    public String saveProject(@Valid Project project, BindingResult bindingResult, Model model, Principal principal) {
+    public String saveProject(@Valid Project project, BindingResult bindingResult, Model model, Principal principal,RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             List<Employee> programmerEmployees = employeeService.findAllByRoles("ROLE_P");
             List<Employee> testerEmployees = employeeService.findAllByRoles("ROLE_T");
             model.addAttribute("programmerEmployees", programmerEmployees);
             model.addAttribute("testerEmployees", testerEmployees);
-
+            model.addAttribute("newOrOld", project.getStatus() != null ? "old" : "new");
             return "/projects/project-form";
         } else {
             Employee owner = employeeService.findByEmail(principal.getName());
             project.setOwner(owner);
+            System.out.println(project.getStatus());
             projectService.save(project);
+            redirectAttributes.addFlashAttribute("projectName",project.getName());
+            redirectAttributes.addFlashAttribute("projectSaved",true);
             return "redirect:/board/manager?success";
         }
     }
 
     //show project details for current manager
     @GetMapping("/projects/{projectId}")
-    public String displayProjectDetails(@PathVariable Long projectId, Principal principal, Model model) {
+    public String displayProjectDetails(@PathVariable  Long projectId, Principal principal, Model model) {
         Project project = projectService.findByProjectId(projectId);
         if (project != null) {
             Employee managerOfThisProject = project.getOwner();
@@ -89,7 +107,8 @@ public class ManagerController {
                 model.addAttribute("tickets", tickets);
                 List<Ticket> uncompletedTickets = new ArrayList<>();
                 for (Ticket ticket : tickets) {
-                    if (!ticket.getStatus().equals("COMPLETED")) uncompletedTickets.add(ticket);
+                    if (!ticket.getStatus().equals("COMPLETED")||ticket.getStatus()!=null){
+                        uncompletedTickets.add(ticket);}
                 }
                 Ticket ticket = new Ticket();
                 model.addAttribute("ticket", ticket);
@@ -104,7 +123,7 @@ public class ManagerController {
 
     // save a new ticket to a project
     @PostMapping("/projects/{projectId}/tickets/save")
-    public String saveTicket(@PathVariable Long projectId, @Valid Ticket ticket, BindingResult bindingResult, Principal principal, Model model) {
+    public String saveTicket(@PathVariable Long projectId, @Valid Ticket ticket, BindingResult bindingResult, Principal principal, Model model,RedirectAttributes redirectAttributes) {
         Project project = projectService.findByProjectId(projectId);
         if (bindingResult.hasErrors()) {
             model.addAttribute("project", project);
@@ -117,6 +136,7 @@ public class ManagerController {
             model.addAttribute("uncompletedTickets", uncompletedTickets);
             List<Employee> allEmployees = project.getEmployees();
             model.addAttribute("allEmployees", allEmployees);
+            model.addAttribute("newOrOld", ticket.getStatus() != null ? "old" : "new");
             return "/projects/project-details-manager";
         } else {
             Employee currentManager = employeeService.findByEmail(principal.getName());
@@ -131,6 +151,8 @@ public class ManagerController {
             history.setEvent("CREATED");
             ticketService.save(ticket);
             historyService.save(history);
+            redirectAttributes.addFlashAttribute("ticketName",ticket.getName());
+            redirectAttributes.addFlashAttribute("ticketSaved",true);
             return "redirect:/board/manager/projects/{projectId}?success";
         }
 
@@ -145,14 +167,9 @@ public class ManagerController {
             Employee currentManager=employeeService.findByEmail(principal.getName());
             Employee projectOwner=project.getOwner();
             if (currentManager.getEmployeeId()==projectOwner.getEmployeeId()){
-                Employee assignedProgrammer = ticket.getEmployeeId();
-                String ticketAssignedTo = assignedProgrammer.getFirstName() + " " + assignedProgrammer.getLastName();
                 List<Comment> comments = ticket.getComments();
                 List<Bug> bugs = ticket.getBugs();
-                String OwnerName=projectOwner.getFirstName()+" "+projectOwner.getLastName();
                 model.addAttribute("ticket", ticket);
-                model.addAttribute("ticketCreatedBy", OwnerName);
-                model.addAttribute("ticketAssignedTo", ticketAssignedTo);
                 model.addAttribute("comments", comments);
                 model.addAttribute("bugs", bugs);
                 return "tickets/ticket-details";
@@ -163,17 +180,39 @@ public class ManagerController {
 
     // start a project
     @GetMapping("/projects/start")
-    public String startProject(@RequestParam("prId") Long projectId, Principal principal) {
+    public String startProject(@RequestParam("prId") Long projectId, Principal principal, RedirectAttributes redirectAttributes) {
         Project project = projectService.findByProjectId(projectId);
         if (project != null) {
             // prevent manager from starting other managers projects
             Employee projectOwner = project.getOwner();
             Employee currentManager = employeeService.findByEmail(principal.getName());
-            if (projectOwner != currentManager) {
+            if (projectOwner != currentManager || project.getStatus().equals("IN PROGRESS")) {
+                redirectAttributes.addFlashAttribute("ownerOrStsError",true);
                 return "redirect:/board/manager?error";
             } else {
                 project.setStatus("IN PROGRESS");
                 projectService.save(project);
+                redirectAttributes.addFlashAttribute("projectStarted",true);
+                return "redirect:/board/manager/projects/" + projectId;
+            }
+        } else return "redirect:/board/manager?error";
+    }
+    // mark a project as completed
+    @GetMapping("/projects/complete")
+    public String completeProject(@RequestParam("prId") Long projectId, Principal principal, RedirectAttributes redirectAttributes) {
+        Project project = projectService.findByProjectId(projectId);
+        if (project != null) {
+            // prevent manager from starting other managers projects
+            Employee projectOwner = project.getOwner();
+            Employee currentManager = employeeService.findByEmail(principal.getName());
+            if (projectOwner != currentManager || project.getStatus().equals("COMPLETED")) {
+                redirectAttributes.addFlashAttribute("ownerOrStsError",true);
+                return "redirect:/board/manager?error";
+            } else {
+                project.setStatus("COMPLETED");
+                project.getTickets().forEach(ticket -> {ticket.setStatus("COMPLETED");});
+                projectService.save(project);
+                redirectAttributes.addFlashAttribute("projectCompleted",true);
                 return "redirect:/board/manager/projects/" + projectId;
             }
         } else return "redirect:/board/manager?error";
@@ -181,7 +220,7 @@ public class ManagerController {
 
     // delete a project
     @GetMapping("/projects/delete")
-    public String deleteProject(@RequestParam("prId") Long projectId, Principal principal) {
+    public String deleteProject(@RequestParam("prId") Long projectId, Principal principal,RedirectAttributes redirectAttributes) {
         Project project = projectService.findByProjectId(projectId);
         if (project != null) {
             // prevent manager from deleting other managers projects
@@ -191,6 +230,8 @@ public class ManagerController {
                 return "redirect:/board/manager?error";
             } else {
                 projectService.delete(project);
+                redirectAttributes.addFlashAttribute("projectName",project.getName());
+                redirectAttributes.addFlashAttribute("projectDeleted",true);
                 return "redirect:/board/manager";
             }
         } else return "redirect:/board/manager?error";
@@ -220,29 +261,33 @@ public class ManagerController {
 
     //delete a ticket
     @GetMapping("/projects/{projectId}/tickets/delete")
-    public String deleteTicket(@RequestParam("ticketId") Long ticketId, @PathVariable Long projectId, Principal principal){
+    public String deleteTicket(@RequestParam("ticketId") Long ticketId, @PathVariable Long projectId, Principal principal,RedirectAttributes redirectAttributes){
         Ticket ticket = ticketService.findTicketByTicketId(ticketId);
         if (ticket != null) {
             // prevent manager from deleting other managers tickets
             Employee ticketOwner = ticket.getOwner();
             Employee currentManager = employeeService.findByEmail(principal.getName());
-            if (ticketOwner != currentManager) {
+            if (ticketOwner != currentManager||ticket.getProjectId().getStatus().equals("COMPLETED")) {
+                redirectAttributes.addFlashAttribute("ticketError",true);
                 return "redirect:/board/manager?error";
             } else {
                 ticketService.delete(ticket);
+                redirectAttributes.addFlashAttribute("ticketName",ticket.getName());
+                redirectAttributes.addFlashAttribute("ticketDeleted",true);
                 return "redirect:/board/manager/projects/{projectId}";
             }
         } else return "redirect:/board/manager?error";
     }
     //edit a ticket
     @GetMapping("/projects/{projectId}/tickets/update")
-    public String editTicket(@RequestParam("ticketId") Long ticketId, @PathVariable Long projectId, Principal principal,Model model){
+    public String editTicket(@RequestParam("ticketId") Long ticketId, @PathVariable Long projectId, Principal principal,Model model,RedirectAttributes redirectAttributes){
         Ticket ticket = ticketService.findTicketByTicketId(ticketId);
         if (ticket != null) {
             // prevent manager from editing other managers tickets
             Employee ticketOwner = ticket.getOwner();
             Employee currentManager = employeeService.findByEmail(principal.getName());
-            if (ticketOwner != currentManager) {
+            if (ticketOwner != currentManager||ticket.getProjectId().getStatus().equals("COMPLETED")) {
+                redirectAttributes.addFlashAttribute("ticketError",true);
                 return "redirect:/board/manager?error";
             } else {
                 Project project=projectService.findByProjectId(projectId);
@@ -261,12 +306,6 @@ public class ManagerController {
                 return "/projects/project-details-manager";
             }
         } else return "redirect:/board/manager?error";
-    }
-    // ajax test
-    @GetMapping("/job")
-    public String getEmployeeName(Principal principal, Model model) {
-        model.addAttribute("TheName", principal.getName());
-        return "projects/test :: test";
     }
 }
 

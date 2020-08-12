@@ -18,6 +18,7 @@ public class TicketService {
     @Autowired
     TicketRepository ticketRepo;
 
+    public List<Ticket> findAll(){return ticketRepo.findAll();}
     public Ticket findTicketByTicketId(Long id){
         return ticketRepo.findTicketByTicketId(id);
     }

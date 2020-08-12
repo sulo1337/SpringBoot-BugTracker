@@ -23,6 +23,7 @@
                         <th>Project Name</th>
                         <th>Project Stage</th>
                         <th>Assigned Employees</th>
+                        <th>Total Tickets</th>
                         <th>Uncompleted Tickets</th>
                         <th>Project Deadline</th>
                         <th>Actions</th>
@@ -35,14 +36,15 @@
                                th:href="@{'/board/manager/projects/'+${project.projectId}}"></a></td>
                         <td th:text="${project.status}"></td>
                         <td th:text="${project.employees.size()}"></td>
-                        <td th:if="${project.tickets!='null'}" th:text="${project.tickets.size()}"></td>
+                        <td class="text-primary text-weight-bold" th:if="${project.tickets!='null'}" th:text="${project.tickets.size()}"></td>
+                        <td class="text-danger text-weight-bold" th:if="${project.tickets!='null'}" th:text="${projectUncompletedTickets.get(project.projectId)}"></td>
                         <td class="text-danger" th:text="${project.deadline}"></td>
                         <td>
                             <a th:href="@{/board/manager/projects/update(prId=${project.projectId})}"
                                class="btn btn-secondary btn-sm"><i class="fas fa-edit"></i></a>
                             <a th:href="@{/board/manager/projects/delete(prId=${project.projectId})}"
                                onclick="if (!(confirm('Are you sure you want to delete ?'))) return false"
-                               class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a>
+                               class="btn btn-danger btn-sm" ><i class="far fa-trash-alt"></i></a>
                         </td>
                     </tr>
                     </tbody>
@@ -61,6 +63,48 @@
         </div>
     </div>
 </div>
+<script>
+    if ("[[${projectSaved}]]"){
+    let projectName="[[${projectName}]]";
+    iziToast.show({
+        title: projectName,
+        message: 'details has been saved',
+        position: 'topRight',
+        color:'green',
+        icon: 'fas fa-check'
+
+    });
+    }
+    if ("[[${projectDeleted}]]") {
+        let projectName = "[[${projectName}]]"
+        iziToast.show({
+            title: projectName,
+            message: 'HAS BEEN Deleted',
+            position: 'topRight',
+            color: 'yellow',
+            icon: 'fas fa-exclamation'
+        });
+    }
+    if ("[[${ownerOrStsError}]]") {
+        iziToast.show({
+            title: 'ERROR',
+            message: 'Wrong inputs',
+            position: 'topRight',
+            color: 'red',
+            icon: 'fas fa-times'
+
+        });
+    }
+    if ("[[${ticketError}]]") {
+        iziToast.show({
+            title: 'Error',
+            message: 'Wrong inputs',
+            position: 'topRight',
+            color: 'red',
+            icon: 'fas fa-times'
+        });
+    }
+</script>
 <script>
     $(document).ready(function() {
         $('#projectsTable').DataTable();

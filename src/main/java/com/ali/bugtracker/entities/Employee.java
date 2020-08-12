@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -19,14 +20,17 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long employeeId;
     @NotBlank(message = "first name cannot be empty")
+    @Size(min = 3,max = 99)
     private String firstName;
     @NotBlank(message = "last name cannot be empty")
+    @Size(min = 1,max = 99)
     private String lastName;
     @NotBlank(message = "provide an email")
     @Email
     @UniqueEmail
     private String email;
     @NotBlank(message = "password field is empty")
+    @Size(min = 6,max = 99)
     private String password;
 
     private boolean enabled;

@@ -6,7 +6,7 @@
 </head>
 <header th:replace="layouts::nav"></header>
 <body>
-<div class="container ">
+<div th:if="${ticketsExists==true}" class="container ">
 
     <h2 class="text-left text-secondary font-weight-bold" th:text="${project.name+' Tickets'}"></h2>
     <div class="row col-md-4">
@@ -27,26 +27,34 @@
                 </div>
                 <div class="card-footer bg-transparent border-success">
                     <h6 class="text-secondary">Created By </h6>
-                    <h6 class="text-success" th:text="${ownerName}"></h6>
+                    <h6 class="text-success" th:text="${ticket.getOwner().getFirstName()+' '+ticket.getOwner().getLastName()}"></h6>
                 </div>
                 <div class="card-footer bg-transparent border-success">
                     <a th:href="@{'/board/programmer/projects/'+${projectId}+'/tickets/'+${ticket.ticketId}}"
-                       class="btn btn-secondary"> more details</a>
+                       class="btn btn-outline-success"> more details</a>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<script>
-    $(document).ready(function () {
-        $("#searchInput").on("keyup", function () {
-            if ($(this).val()) {
-                var value = $(this).val().toLowerCase();
-                $('.tickets').hide();
-                $("[title*='" + value + "']").show();
-            } else $('.tickets').show();
+    <script>
+        $(document).ready(function () {
+            $("#searchInput").on("keyup", function () {
+                if ($(this).val()) {
+                    var value = $(this).val().toLowerCase();
+                    $('.tickets').hide();
+                    $("[title*='" + value + "']").show();
+                } else $('.tickets').show();
+            });
         });
-    });
-</script>
+    </script>
+</div>
+
+
+<div th:if="${ticketsExists==false}" class="container ">
+<div class="text-center">
+    <h2 class="text-secondary font-weight-bold" th:text="${project.name}"></h2>
+    <h2 class="text-secondary">  You have not been assigned a ticket in this project yet !</h2>
+</div>
+</div>
 </body>
 </html>

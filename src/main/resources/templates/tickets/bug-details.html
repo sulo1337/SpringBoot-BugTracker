@@ -6,20 +6,50 @@
     <header th:replace="layouts::nav"></header>
 <body>
 <div class="container">
-    <div th:object="${bug}" class="card text-center">
+    <div th:object="${bug}" class="card text-center" style="margin-bottom: 10px;margin-top: 10px">
         <div class="card-header border-danger">
             <h4 th:text="${'Severity: '+bug.severity}"></h4>
         </div>
         <div class="card-body">
-            <h5 class="card-title" th:text="${'Tester: '+testerName}"></h5>
+            <h5 class="card-title text-success"
+                th:text="${'Tester: '+bug.getEmployeeId().getFirstName()+' '+bug.getEmployeeId().getLastName()}"></h5>
             <p class="card-text font-weight-bold" th:text="${bug.description}"></p>
-            <a th:if="${!bug.fixed}" th:href="@{/board/programmer/projects/tickets/bugs/fix(prId=${projectId},tId=${ticketId},bugId=${bugId})}"
-               onclick="if (!(confirm('Mark Bug As Fixed ?'))) return false" class="btn btn-secondary">Mark As Fixed ?</a>
-            <h5 th:if="${bug.fixed}" class="text-success">This Bug Has Been Fixed</h5>
+            <a th:if="${!bug.fixed}"
+               th:href="@{/board/programmer/projects/tickets/bugs/fix(prId=${projectId},tId=${ticketId},bugId=${bugId})}"
+               onclick="if (!(confirm('Mark Bug As Fixed ?'))) return false" class="btn btn-outline-success" style="margin: 10px">Mark As Fixed
+                ?</a>
+            <h5 th:if="${bug.fixed}" class="text-success" >This Bug Has Been Fixed</h5>
+            <button class="btn btn-outline-secondary" type="button" id="show-hide">Show/Hide Image</button>
+            <!--th:src="@{/images/BugTrackerDB-2020-04-18_18_17.png}" th:src="@{${#strings.substringAfter(bug.imagePath,'./src/main/resources/static')}}"//imagePath=path.toString().replace("\\","/");-->
+            <img id="myImg" class="img-responsive img-thumbnail border-success" th:src="@{${bug.imagePath}}" style=" width: 100%; height: auto;margin-top: 5px; margin-bottom: 5px"/>
         </div>
         <div class="card-footer border-danger text-muted" th:text="${'Date Created: '+bug.createdDate}">
         </div>
     </div>
 </div>
+<script>
+    if ("[[${bugError}]]"){
+        iziToast.show({
+            title: 'Error',
+            message: 'Wrong inputs',
+            position: 'topRight',
+            color:'red',
+            icon: 'fas fa-times'
+        });
+    }
+    if ("[[${bugFixed}]]"){
+        iziToast.show({
+            title: 'bug',
+            message: 'has been Fixed',
+            position: 'topRight',
+            color:'green',
+            icon: 'fas fa-check'
+        });
+    }
+
+    $('#show-hide').on("click",()=>{
+        $('#myImg').toggle('slow');
+    });
+</script>
 </body>
 </html>

@@ -11,6 +11,7 @@ import java.util.List;
 
 public interface BugRepository extends CrudRepository<Bug,Long> {
 
+    List<Bug> findAll();
     List<Bug> findBugsByTicketId(Ticket ticket);
     Bug findBugByBugId(Long bugId);
     @Query(nativeQuery = true,value = "select severity as Label, count(*) as Value " +

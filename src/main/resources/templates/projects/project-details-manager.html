@@ -17,7 +17,7 @@
                         <th>Ticket Name</th>
                         <th>Ticket Stage</th>
                         <th>Ticket Priority</th>
-                        <th>Actions</th>
+                        <th th:if="${!project.getStatus().equals('COMPLETED')}">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -27,7 +27,7 @@
                         </td>
                         <td th:text="${ticket.status}"></td>
                         <td th:text="${ticket.priority}"></td>
-                        <td>
+                        <td th:if="${!project.getStatus().equals('COMPLETED')}">
                             <a th:href="@{'/board/manager/projects/'+${project.projectId}+'/tickets/'+delete(ticketId=${ticket.ticketId})}"
                                onclick="if (!(confirm('Are you sure you want to delete ?'))) return false"
                                class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></a>
@@ -39,7 +39,7 @@
                 </table>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4" th:if="${!project.getStatus().equals('COMPLETED')}">
             <form th:action="'/board/manager/projects/'+${projectId}+'/tickets/save'" th:object="${ticket}"
                   method="POST">
                 <div class="form-group row">
@@ -98,47 +98,95 @@
                 </div>
             </form>
         </div>
-    </div>
-    <div class="group-form row">
-        <div class="col-md-4">
-            <div th:if="${param.success}" class="alert alert-success">
-                Submission Completed Successfully !
-            </div>
-
+        <div class="col-md-4 text-center" th:if="${project.getStatus().equals('COMPLETED')}">
+            <h4 class="text-center text-success" th:text="${project.name+' has been completed'}"></h4>
+            <a th:href="@{/board/manager/projects/start(prId=${projectId})}"
+               onclick="if (!(confirm('Reopen the Project ?'))) return false" class="btn btn-outline-success">Reopen the
+                project</a>
         </div>
-    </div>
 
-    <div th:object="${project}" class="container" style="margin-top: 5%; margin-bottom: 5%">
-        <div class="row bg-dark" style="min-height:100px;text-align:center; align-items: center;">
-            <div class="col-md-3">
-                <h6 class="text-white">Project Name : </h6>
-                <h6 class="text-info" th:text="${project.name}"></h6>
-            </div>
-            <div th:if="${project.status=='NOT STARTED'}" class="col-md-3">
-                <h6 class="text-white">Project Not started yet !</h6>
-                <a th:href="@{/board/manager/projects/start(prId=${projectId})}"
-                   onclick="if (!(confirm('start the project ?'))) return false" class="btn btn-success">Start the
-                    Project !</a>
-            </div>
-            <div th:unless="${project.status=='NOT STARTED'}" class="col-md-3">
-                <h6 class="text-white">Project Status : </h6>
-                <h6 class="text-success" th:text="${project.status}"></h6>
-            </div>
-            <div class="col-md-3">
-                <h6 class="text-white">Project created : </h6>
-                <h6 class="text-success" th:text="${project.createdDate}"></h6>
-            </div>
-            <div class="col-md-3">
-                <h6 class="text-white">Number of uncompleted tickets : </h6>
-                <h6 class="text-success" th:text="${uncompletedTickets.size()}"></h6>
+        <div th:object="${project}" class="container" style="margin-top: 5%; margin-bottom: 5%">
+            <div class="row bg-dark" style="min-height:100px;text-align:center; align-items: center;">
+                <div class="col-md-3">
+                    <h6 class="text-white">Project Name : </h6>
+                    <h6 class="text-info" th:text="${project.name}"></h6>
+                </div>
+                <div th:if="${project.status=='NOT STARTED'}" class="col-md-3">
+                    <h6 class="text-white">Project Not started yet !</h6>
+                    <a th:href="@{/board/manager/projects/start(prId=${projectId})}"
+                       onclick="if (!(confirm('start the project ?'))) return false" class="btn btn-outline-success">Start
+                        the
+                        Project !</a>
+                </div>
+                <div th:unless="${project.status=='NOT STARTED'}" class="col-md-3">
+                    <h6 class="text-white">Project Status : </h6>
+                    <h6 class="text-success" th:text="${project.status}"></h6>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-white">Project created : </h6>
+                    <h6 class="text-success" th:text="${project.createdDate}"></h6>
+                </div>
+                <div class="col-md-3" th:if="${project.status=='IN PROGRESS'}">
+                    <h6 class="text-danger" th:text="${'deadline: '+project.deadline}"></h6>
+                    <a th:href="@{/board/manager/projects/complete(prId=${projectId})}"
+                       onclick="if (!(confirm('Marking the project as completed will close all assigned tickets.\n Mark project As Completed?'))) return false"
+                       class="btn btn-outline-success">Mark As Completed</a>
+                </div>
+                <div class="col-md-3" th:if="${project.status=='COMPLETED'}">
+                    <h6 class="text-white" th:text="${'deadline: '+project.deadline}"></h6>
+                    <h6 class="text-success">Marked As Completed</h6>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <script>
-    $(document).ready(function() {
+    if ("[[${projectStarted}]]") {
+        let projectName = "[[${project.name}]]"
+        iziToast.show({
+            title: projectName,
+            message: 'HAS BEEN STARTED',
+            position: 'topRight',
+            color: 'green',
+            icon: 'fas fa-check'
+        });
+    }
+    if ("[[${projectCompleted}]]") {
+        let projectName = "[[${project.name}]]"
+        iziToast.show({
+            title: projectName,
+            message: 'HAS BEEN COMPLETED',
+            position: 'topRight',
+            color: 'green',
+            icon: 'fas fa-check'
+        });
+    }
+    if ("[[${ticketSaved}]]") {
+        let ticketName = "[[${ticketName}]]"
+        iziToast.show({
+            title: ticketName,
+            message: 'details has been saved',
+            position: 'topRight',
+            color: 'green',
+            icon: 'fas fa-check'
+        });
+    }
+    if ("[[${ticketDeleted}]]") {
+        let ticketName = "[[${ticketName}]]"
+        iziToast.show({
+            title: ticketName,
+            message: 'has been deleted',
+            position: 'topRight',
+            color: 'yellow',
+            icon: 'fas fa-exclamation'
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
         $('#ticketTable').DataTable();
-    } );
+    });
+
 </script>
 </body>
 </html>

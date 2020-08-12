@@ -5,7 +5,7 @@
 <header th:replace="layouts::nav"></header>
 
 <body>
-<div class="container" id="chart_parent" sec:authorize="hasRole('ROLE_M')">
+<div th:if="${projectsExists==true}" class="container" id="chart_parent" sec:authorize="hasRole('ROLE_M')">
     <script>
         var timelineData = "[[${projectTimeList}]]"
         var chartwidth = $('#chart_parent').width();
@@ -14,9 +14,16 @@
         <h2 class="text-center"> Project Timelines </h2>
         <div id="chart_div" style="min-height: inherit; max-height: inherit"></div>
     </div>
+    <script sec:authorize="hasRole('ROLE_M')" type="text/javascript" th:src="@{js/ProjectsTimeline.js}"></script>
 
 </div>
-<script sec:authorize="hasRole('ROLE_M')" type="text/javascript" th:src="@{js/ProjectsTimeline.js}"></script>
-
+<div th:if="${projectsExists==false}" class="container" sec:authorize="hasRole('ROLE_M')">
+    <div class="display-4 text-center">
+       You didn't create any project yet !
+      <div class=" text-center col-md-12">
+        <a th:href="@{/board/manager/projects/new}" class="btn btn-primary btn"> Create New Project</a>
+      </div>
+    </div>
+</div>
 </body>
 </html>

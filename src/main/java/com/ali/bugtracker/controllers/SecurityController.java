@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
 
@@ -37,7 +38,7 @@ public class SecurityController {
         if(principal!=null)
             return "redirect:/profile";
         else
-            return "/main/sign-in";
+            return "/main/index";
     }
 
     @GetMapping("/register")
@@ -52,7 +53,7 @@ public class SecurityController {
     }
 
     @PostMapping("/register/save")
-    public String saveEmployee(@Valid Employee employee,BindingResult bindingResult ,Model model){
+    public String saveEmployee(@Valid Employee employee, BindingResult bindingResult , Model model, HttpServletRequest request){
         if (bindingResult.hasErrors()) {
             return "/main/register";
         }
@@ -65,8 +66,12 @@ public class SecurityController {
             mailMessage.setTo(employee.getEmail());
             mailMessage.setSubject("Complete Registration In Bug Tracker!");
             mailMessage.setFrom("bugtrackeremailservice@gmail.com");
+            //format the path in case i am not running on localHost:8080
+            StringBuffer fullReqPath = request.getRequestURL();
+            String reqPath = fullReqPath.delete(fullReqPath.indexOf("register"),fullReqPath.length()).toString();
+            System.out.println("###########################################"+reqPath);
             mailMessage.setText("To confirm your account, please click here : "
-                    +"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
+                    +reqPath+"confirm-account?token="+confirmationToken.getConfirmationToken());
 
             emailSenderService.sendEmail(mailMessage);
             return "redirect:/register?success";

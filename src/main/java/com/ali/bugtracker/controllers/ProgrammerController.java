@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -44,8 +45,8 @@ public class ProgrammerController {
             ticketsCount.put(project.getProjectId(), ticketService.countTicketsByProjectIdAndEmployeeId(project, currentProgrammer));
 
         }
-        String currentProgrammerName=currentProgrammer.getFirstName()+"'s";
-        model.addAttribute("currentProgrammerName",currentProgrammerName);
+        String currentProgrammerName = currentProgrammer.getFirstName() + "'s";
+        model.addAttribute("currentProgrammerName", currentProgrammerName);
         model.addAttribute("currentProgrammer", currentProgrammer);
         model.addAttribute("ticketsCount", ticketsCount);
         model.addAttribute("allProjects", allProjects);
@@ -69,9 +70,9 @@ public class ProgrammerController {
                 for (Ticket ticket : allTickets) {
                     if (ticket.getEmployeeId().equals(currentProgrammer)) tickets.add(ticket);
                 }
-                Employee owner = project.getOwner();
-                String ownerName = owner.getFirstName() + " " + owner.getLastName();
-                model.addAttribute("ownerName", ownerName);
+                if (tickets.size() == 0) {
+                    model.addAttribute("ticketsExists", false);
+                } else model.addAttribute("ticketsExists", true);
                 model.addAttribute("tickets", tickets);
                 model.addAttribute("project", project);
                 return "projects/project-details-programmer";
@@ -104,16 +105,10 @@ public class ProgrammerController {
                 model.addAttribute("submissionDate", submissionDate);
 
                 Comment comment = new Comment();
-                Employee employee = ticket.getOwner();
-                String ownerName = employee.getFirstName() + " " + employee.getLastName();
-                Employee assignedProgrammer = ticket.getEmployeeId();
-                String ticketAssignedTo = assignedProgrammer.getFirstName() + " " + assignedProgrammer.getLastName();
                 List<Comment> comments = ticket.getComments();
                 List<Bug> bugs = ticket.getBugs();
                 model.addAttribute("ticket", ticket);
                 model.addAttribute("project", project);
-                model.addAttribute("ticketAssignedTo",ticketAssignedTo);
-                model.addAttribute("ticketCreatedBy", ownerName);
                 model.addAttribute("comments", comments);
                 model.addAttribute("bugs", bugs);
                 model.addAttribute("comment", comment);
@@ -125,9 +120,10 @@ public class ProgrammerController {
 
     // add a new comment to the ticket
     @PostMapping("/projects/{projectId}/tickets/{ticketId}/comments/save")
-    public String saveComment(@Valid Comment comment, BindingResult bindingResult, Principal principal, @PathVariable Long projectId, @PathVariable Long ticketId, Model model) {
+    public String saveComment(@Valid Comment comment, BindingResult bindingResult, Principal principal, @PathVariable Long projectId, @PathVariable Long ticketId, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "redirect:/board/programmer/projects/{projectId}/tickets/{ticketId}?error";
+            redirectAttributes.addFlashAttribute("commentError", true);
+            return "redirect:/board/programmer/projects/{projectId}/tickets/{ticketId}";
         } else {
             Employee currentEmployee = employeeService.findByEmail(principal.getName());
             Ticket ticket = ticketService.findTicketByTicketId(ticketId);
@@ -135,34 +131,36 @@ public class ProgrammerController {
             comment.setEmployeeId(currentEmployee);
             comment.setTicketId(ticket);
             commentService.save(comment);
-            return "redirect:/board/programmer/projects/{projectId}/tickets/{ticketId}?success";
+            redirectAttributes.addFlashAttribute("commentSaved", true);
+            return "redirect:/board/programmer/projects/{projectId}/tickets/{ticketId}";
         }
     }
 
     // start a  ticket
     @GetMapping("/projects/tickets/start")
-    public String startProject(@RequestParam("prId") Long projectId, @RequestParam("tId") Long ticketId, Principal principal) {
+    public String startProject(@RequestParam("prId") Long projectId, @RequestParam("tId") Long ticketId, Principal principal, RedirectAttributes redirectAttributes) {
         Ticket ticket = ticketService.findTicketByTicketId(ticketId);
         if (ticket != null) {
             Employee currentProgrammer = employeeService.findByEmail(principal.getName());
             Employee programmerAssignedTo = ticket.getEmployeeId();
-            if (currentProgrammer != programmerAssignedTo) {
-                return "redirect:/board/programmer";
-            } else {
-                if (ticket.getStatus().equals("NOT STARTED")){
-                ticket.setStatus("IN PROGRESS");
-                // history fields
-                History history = new History();
-                history.setTicketId(ticket);
-                history.setEmployeeId(currentProgrammer);
-                history.setEvent("STARTED");
-                history.setModificationDate(historyService.currentDate());
-                // save changes
-                ticketService.save(ticket);
-                historyService.save(history);
+            if (currentProgrammer != programmerAssignedTo || ticket.getProjectId().getStatus().equals("COMPLETED")) {
+                redirectAttributes.addFlashAttribute("ticketError", true);
                 return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
-                }
-                else if (ticket.getStatus().equals("COMPLETED")){
+            } else {
+                if (ticket.getStatus().equals("NOT STARTED")) {
+                    ticket.setStatus("IN PROGRESS");
+                    // history fields
+                    History history = new History();
+                    history.setTicketId(ticket);
+                    history.setEmployeeId(currentProgrammer);
+                    history.setEvent("STARTED");
+                    history.setModificationDate(historyService.currentDate());
+                    // save changes
+                    ticketService.save(ticket);
+                    historyService.save(history);
+                    redirectAttributes.addFlashAttribute("ticketStarted", true);
+                    return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
+                } else if (ticket.getStatus().equals("COMPLETED")) {
                     ticket.setStatus("SUBMITTED FOR TESTING");
                     // history fields
                     History history = new History();
@@ -173,61 +171,64 @@ public class ProgrammerController {
                     // save changes
                     ticketService.save(ticket);
                     historyService.save(history);
+                    redirectAttributes.addFlashAttribute("ticketOpened", true);
                     return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
-                }
-                else return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
+                } else return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
             }
         } else return "redirect:/board/programmer";
     }
 
     //submit for testing a ticket
     @GetMapping("/projects/tickets/submitToTest")
-    public String submitTicketToTest(@RequestParam("prId") Long projectId, @RequestParam("tId") Long ticketId, Principal principal) {
+    public String submitTicketToTest(@RequestParam("prId") Long projectId, @RequestParam("tId") Long ticketId, Principal principal,RedirectAttributes redirectAttributes) {
         Ticket ticket = ticketService.findTicketByTicketId(ticketId);
         if (ticket != null) {
             Employee currentProgrammer = employeeService.findByEmail(principal.getName());
             Employee programmerAssignedTo = ticket.getEmployeeId();
-            if (currentProgrammer != programmerAssignedTo) {
-                return "redirect:/board/programmer";
+            if (currentProgrammer != programmerAssignedTo || ticket.getProjectId().getStatus().equals("COMPLETED")) {
+                redirectAttributes.addFlashAttribute("ticketError", true);
+                return "redirect:/board/programmer/projects/"+projectId+"/tickets/"+ticketId;
             } else {
-                if (ticket.getStatus().equals("IN PROGRESS")){
-                ticket.setStatus("SUBMITTED FOR TESTING");
-                // history fields
-                History history = new History();
-                history.setTicketId(ticket);
-                history.setEmployeeId(currentProgrammer);
-                history.setEvent("SUBMITTED FOR TESTING");
-                history.setModificationDate(historyService.currentDate());
-                // save changes
-                ticketService.save(ticket);
-                historyService.save(history);
-                return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
-                }
-                else return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
+                if (ticket.getStatus().equals("IN PROGRESS")) {
+                    ticket.setStatus("SUBMITTED FOR TESTING");
+                    // history fields
+                    History history = new History();
+                    history.setTicketId(ticket);
+                    history.setEmployeeId(currentProgrammer);
+                    history.setEvent("SUBMITTED FOR TESTING");
+                    history.setModificationDate(historyService.currentDate());
+                    // save changes
+                    ticketService.save(ticket);
+                    historyService.save(history);
+                    redirectAttributes.addFlashAttribute("ticketSubmitted", true);
+                    return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
+                } else return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
             }
         } else return "redirect:/board/programmer";
     }
 
     @GetMapping("/projects/tickets/complete")
-    public String completeTicket(@RequestParam("prId") Long projectId, @RequestParam("tId") Long ticketId, Principal principal) {
+    public String completeTicket(@RequestParam("prId") Long projectId, @RequestParam("tId") Long ticketId, Principal principal,RedirectAttributes redirectAttributes) {
         Ticket ticket = ticketService.findTicketByTicketId(ticketId);
         if (ticket != null && ticket.getStatus().equals("SUBMITTED FOR TESTING")) {
             Employee currentProgrammer = employeeService.findByEmail(principal.getName());
             Employee programmerAssignedTo = ticket.getEmployeeId();
-            if (currentProgrammer != programmerAssignedTo) {
-                return "redirect:/board/programmer";
+            if (currentProgrammer != programmerAssignedTo|| !ticket.getStatus().equals("SUBMITTED FOR TESTING")|| ticket.getProjectId().getStatus().equals("COMPLETED")) {
+                redirectAttributes.addFlashAttribute("ticketError", true);
+                return "redirect:/board/programmer/projects/"+projectId+"/tickets/"+ticketId;
             } else {
-                    ticket.setStatus("COMPLETED");
-                    // history fields
-                    History history = new History();
-                    history.setTicketId(ticket);
-                    history.setEmployeeId(currentProgrammer);
-                    history.setEvent("COMPLETED");
-                    history.setModificationDate(historyService.currentDate());
-                    // save changes
-                    ticketService.save(ticket);
-                    historyService.save(history);
-                    return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
+                ticket.setStatus("COMPLETED");
+                // history fields
+                History history = new History();
+                history.setTicketId(ticket);
+                history.setEmployeeId(currentProgrammer);
+                history.setEvent("COMPLETED");
+                history.setModificationDate(historyService.currentDate());
+                // save changes
+                ticketService.save(ticket);
+                historyService.save(history);
+                redirectAttributes.addFlashAttribute("ticketCompleted", true);
+                return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId;
             }
         } else return "redirect:/board/programmer";
 
@@ -245,9 +246,6 @@ public class ProgrammerController {
             if (currentProgrammer != programmerAssignedTo) {
                 return "redirect:/board/programmer";
             } else {
-                Employee createdBy = bug.getEmployeeId();
-                String testerName = createdBy.getFirstName() + " " + createdBy.getLastName();
-                model.addAttribute("testerName", testerName);
                 model.addAttribute("bug", bug);
                 return "tickets/bug-details";
             }
@@ -255,18 +253,20 @@ public class ProgrammerController {
     }
 
     @GetMapping("/projects/tickets/bugs/fix")
-    public String fixBug(@RequestParam("prId") Long projectId, @RequestParam("tId") Long ticketId, @RequestParam("bugId") Long bugId, Principal principal) {
+    public String fixBug(@RequestParam("prId") Long projectId, @RequestParam("tId") Long ticketId, @RequestParam("bugId") Long bugId, Principal principal,RedirectAttributes redirectAttributes) {
         Ticket ticket = ticketService.findTicketByTicketId(ticketId);
         Bug bug = bugService.findBugByBugId(bugId);
         if (ticket != null && bug != null) {
             Employee currentProgrammer = employeeService.findByEmail(principal.getName());
             Employee programmerAssignedTo = ticket.getEmployeeId();
-            if (currentProgrammer != programmerAssignedTo) {
+            if (currentProgrammer != programmerAssignedTo ||bug.isFixed()) {
+                redirectAttributes.addFlashAttribute("bugError", true);
                 return "redirect:/board/programmer";
             } else {
                 bug.setFixed(true);
                 bugService.save(bug);
-                return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId+"/bugs/"+bugId;
+                redirectAttributes.addFlashAttribute("bugFixed", true);
+                return "redirect:/board/programmer/projects/" + projectId + "/tickets/" + ticketId + "/bugs/" + bugId;
             }
         } else return "redirect:/board/programmer";
     }

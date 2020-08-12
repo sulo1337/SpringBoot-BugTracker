@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,8 +33,10 @@ public class Ticket extends Auditable<String> {
     private Project projectId;
 
     @NotBlank(message = "name is empty")
+    @Size(min = 1,max = 99)
     private String name;
     @NotBlank(message = "description is empty")
+    @Size(min = 1,max = 495)
     private String description;
 
     @Pattern(regexp = "^(NOT STARTED|IN PROGRESS|SUBMITTED FOR TESTING|COMPLETED)$" ,message = "invalid status")

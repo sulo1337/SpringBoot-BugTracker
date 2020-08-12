@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface TicketRepository extends CrudRepository<Ticket,Long> {
+     List<Ticket> findAll();
      List<Ticket> findAllByOwner(Employee owner);
      Long countTicketsByOwner(Employee owner);
      Long countTicketsByProjectIdAndStatus(Project projectId,String status);

@@ -5,74 +5,61 @@
     <meta charset="UTF-8">
     <title>Registration page</title>
 </head>
+<link th:href="@{/css/register.css}" rel="stylesheet" />
 <body>
-<div class="container" >
-
-    <div class="card"  style="max-width:600px;margin-left: auto;margin-right: auto;margin-top:24px;padding: 24px;">
-        <h3 class="card-header">Registration Form</h3>
-        <div class="card-block" style="padding: 24px;">
-        <form autocomplete="off" th:action="@{/register/save}" th:object="${employee}" method="post" class="form-signin" role="form">
-            <div class="form-group">
-                <div class="">
-                    <input type="text" th:field="*{firstName}" placeholder="First Name" class="form-control" />
-                    <span class="badge badge-danger"  th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Name Error</span>
-
-                </div>
+<div class="container d-flex justify-content-center my-5">
+    <div class="row my-2 mx-2 main">
+        <!--left-column-->
+        <div class="col-md-4 col-12 mycol">
+            <!--image--> <img th:src="@{/css/register-image.jpg}" width="100%" height="100%"> </div>
+        <!--right-column-->
+        <div class="col-md-8 col-12 xcol">
+            <h2 class="title pt-5 pb-3">Sign up</h2>
+            <div th:if="${param.success}" class="alert alert-success">
+                Registered successfully,Check your inbox to verify your Email !
             </div>
-            <div class="form-group">
-                <div class="">
-                    <input type="text" th:field="*{lastName}" placeholder="Last Name" class="form-control" />
-                    <span class="badge badge-danger"  th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Name Error</span>
-
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="">
-                    <input type="text" th:field="*{email}" placeholder="Email" class="form-control" />
-                    <span class="badge badge-danger"  th:if="${#fields.hasErrors('email')}" th:errors="*{email}">email Error</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="">
-                    <input type="password" th:field="*{password}" placeholder="Password" class="form-control" />
-                    <span class="badge badge-danger"  th:if="${#fields.hasErrors('password')}" th:errors="*{password}">password Error</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="">
-                    <div class="col-sm-5 col-md-5">
-                        <label>Choose a Role</label>
-                    <select class="form-control form-control-sm" th:field="*{role}" name="roles" >
-                        <option th:value="ROLE_M">Project Manager</option>
-                        <option th:value="ROLE_P">Programmer</option>
-                        <option th:value="ROLE_T">Tester</option>
-                    </select>
-                    <span class="badge badge-danger"  th:if="${#fields.hasErrors('role')}" th:errors="*{role}">role Error</span>
+            <form id="register-form" class="myform" th:action="@{/register/save}" th:object="${employee}" method="post">
+                <div class="row rone">
+                    <div class="form-group col-md-6 fone py-3"> <input type="text" th:field="*{firstName}" class="form-control" placeholder="First name">
+                        <div class="alert alert-danger"  th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
+                    </div>
+                    <div class="form-group col-md-6 ftwo py-3"> <input type="text" th:field="*{lastName}" class="form-control" placeholder="Last name">
+                        <div class="alert alert-danger"  th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
                     </div>
                 </div>
-            </div>
-
-            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-            <div class="form-group">
-                <div class="form-actions" style="margin-top: 12px;">
-                    <button type="submit" class="btn btn-success">Register User</button>
+                <div class="row rtwo">
+                    <div class="form-group col-md-6 fthree py-3"> <input type="email" th:field="*{email}" class="form-control jk" placeholder="Enter a valid Email">
+                        <div class="alert alert-danger"  th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                    </div>
+                    <div class="form-group col-md-6 ffour py-3"> <input th:field="*{password}" type="password" class="form-control lm" placeholder="Enter a password">
+                        <div class="alert alert-danger"  th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                    </div>
                 </div>
-            </div>
-            <!-- <span th:utext="${successMessage}"></span> -->
-            <div class="form-group">
-                <span>Already registered? <a href="/" th:href="@{/login}">Login here</a></span>
-            </div>
-        </form>
-        </div>
-
-        <div th:if="${param.success}" class="alert alert-success">
-            You have successfully registered !
-            A confirmation Email has been sent!
-        </div>
-        <div th:if="${param.error}" class="alert alert-success">
-            Something Went wrong,Couldn't Confirm Your Email !
+                <div class="row rthree">
+                    <div class="form-group col-md-6 ffive py-3"><label>Choose a Role</label></div>
+                    <div class="form-group col-md-6 fsix py-3">
+                        <select class="form-control form-control-sm" th:field="*{role}" name="roles" >
+                            <option th:value="ROLE_M">Project Manager</option>
+                            <option th:value="ROLE_P">Programmer</option>
+                            <option th:value="ROLE_T">Tester</option>
+                        </select>
+                        <div class="alert alert-danger"  th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></div>
+                    </div>
+                </div>
+                <div class="row rfour">
+                    <div class="form-group col-md-6 fseven py-3"> <button type="submit" id="sub-bt" class="btn btn-secondary"><span>Create account</span></button> </div>
+                    <div class="form-group col-md-6 feight py-3">
+                        <p class="text-muted">Already have an account?<br><a  href="/" th:href="@{/}">Sign in</a></p>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+<script>
+    $('#register-form').submit(function(){
+        document.getElementById('sub-bt').disabled=true;
+    });
+</script>
 </body>
 </html>

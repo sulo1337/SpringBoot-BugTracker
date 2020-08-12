@@ -32,8 +32,8 @@
         <br>
         <div class="col-md-4">
             <h4 class="text-center text-danger">Found a bug ?</h4>
-            <form th:action="'/board/tester/projects/'+${projectId}+'/tickets/'+${ticketId}+'/bug/save'"
-                  th:object="${bug}" method="POST">
+            <form id="bugForm" th:action="'/board/tester/projects/'+${projectId}+'/tickets/'+${ticketId}+'/bug/save'"
+                  th:object="${bug}" method="POST" enctype="multipart/form-data">
 
                 <div style="margin-top: 10px">
                     <span class="badge badge-primary">Enter Bug Description</span>
@@ -54,38 +54,58 @@
                               th:errors="*{severity}">severity Error</span>
                     </div>
                 </div>
+                <!--image file-->
+                <div class="custom-file" style="margin-bottom: 20px;margin-top: 10px">
+                    <label id="file-label" class="custom-file-label" for="validatedCustomFile">add an image...</label>
+                    <input type="file" class="custom-file-input" name="file" id="validatedCustomFile"
+                           accept=".png, .jpg, .jpeg, .gif">
+                    <span class="badge badge-danger" th:if="${imageError!=null}" th:text="${imageError}"></span>
+                </div>
+
                 <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                 <button class="btn btn-success" style="margin-top: 10px" type="submit">Submit</button>
             </form>
-            <div th:if="${param.success}" class="alert alert-success">
-                Bug submitted !
-            </div>
             <div th:if="${param.error}" class="alert alert-danger">
                 Error !
             </div>
         </div>
     </div>
 </div>
-<!--ticket information after it is COMPLETED-->
-<div class="container" th:object="${ticket}" th:if="${ticket.status=='COMPLETED'}">
-    <div class="card text-center">
-        <div class="card-header border-danger">
-            <h4 th:text="${ticket.name}"></h4>
-        </div>
-        <div class="card-body">
-            <h5 class="card-title" th:text="${'Created By: '+ticketCreatedBy}"></h5>
-            <p class="card-text font-weight-bold" th:text="${ticket.description}"></p>
-
-            <h5 class="text-success" th:text="${'This Ticket Has Been Set As Completed By: '+ticketAssignedTo}"></h5>
-        </div>
-        <div class="card-footer border-danger text-muted" th:text="${'Date Created: '+ticket.createdDate}">
-        </div>
-    </div>
-</div>
 <script>
-    $(document).ready(function() {
+    if ("[[${bugSaved}]]"){
+        iziToast.show({
+            title: 'a new bug',
+            message: 'has been submitted',
+            position: 'topRight',
+            color:'green',
+            icon: 'fas fa-check'
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
         $('#bugTable').DataTable();
-    } );
+    });
+    $('#bugForm').submit(function () {
+        if (document.getElementById("validatedCustomFile").files.length == 0) {
+            iziToast.show({
+                title: 'Error',
+                message: 'choose a screenshot first',
+                position: 'topRight',
+                color:'red',
+                icon: 'fas fa-times'
+            });
+            return false;
+        }
+    });
+    $('#validatedCustomFile').on('change', function () {
+        files = $(this)[0].files;
+        name = '';
+        for (var i = 0; i < files.length; i++) {
+            name += '\"' + files[i].name + '\"' + (i != files.length - 1 ? ", " : "");
+        }
+        $(".custom-file-label").html(name);
+    });
 </script>
 </body>
 </html>

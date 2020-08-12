@@ -35,17 +35,23 @@ public class HomeController {
     ProjectRepository proRepo;
 
     @GetMapping()
-    public String displayHome(){
+    public String displayHome(Model model,Principal principal){
+        if (principal!=null){
+            return "redirect:/profile";
+        }
         return "main/index";
     }
 
     @GetMapping("/home")
     public String displayChartsPage(Principal principal, Model model) throws JsonProcessingException {
-        displayProjectsTimelines(principal,model);
+        Employee currentManager=empRepo.findByEmail(principal.getName());
+        model.addAttribute("currentManager",currentManager);
+        List<Project> ownedProjects= proRepo.findAllByOwnerOrderByDeadline(currentManager);
+        model.addAttribute("projectsExists", ownedProjects.size() != 0);
+        displayProjectsTimelines(currentManager,model);
         return "main/home";
     }
-    public void displayProjectsTimelines(Principal principal, Model model) throws JsonProcessingException {
-        Employee employee=empRepo.findByEmail(principal.getName());
+    public void displayProjectsTimelines(Employee employee, Model model) throws JsonProcessingException {
         List<TimelineData> timelineData=proRepo.getTimeLineData(employee.getEmployeeId());
         ObjectMapper objectMapper= new ObjectMapper();
         String jsonTimelineString =objectMapper.writeValueAsString(timelineData);

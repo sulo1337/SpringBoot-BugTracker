@@ -1,6 +1,7 @@
 package com.ali.bugtracker.security;
 
 import com.ali.bugtracker.entities.Employee;
+import com.ali.bugtracker.repositories.EmployeeRepository;
 import com.ali.bugtracker.services.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AuditorAware;
@@ -17,6 +18,7 @@ public class AuditorAwareImpl implements AuditorAware<String> {
         if (authentication==null || !authentication.isAuthenticated()){
             return null;
         }
-        return Optional.of(((User) authentication.getPrincipal()).getUsername());
+        User user =(User)authentication.getPrincipal();
+        return Optional.of(user.getUsername());
     }
 }
