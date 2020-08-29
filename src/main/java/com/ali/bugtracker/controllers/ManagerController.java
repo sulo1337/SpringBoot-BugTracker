@@ -68,7 +68,7 @@ public class ManagerController {
         model.addAttribute("testerEmployees", testerEmployees);
         model.addAttribute("newOrOld","new");
         model.addAttribute("project", project);
-        return "/projects/project-form";
+        return "projects/project-form";
     }
 
 
@@ -81,7 +81,7 @@ public class ManagerController {
             model.addAttribute("programmerEmployees", programmerEmployees);
             model.addAttribute("testerEmployees", testerEmployees);
             model.addAttribute("newOrOld", project.getStatus() != null ? "old" : "new");
-            return "/projects/project-form";
+            return "projects/project-form";
         } else {
             Employee owner = employeeService.findByEmail(principal.getName());
             project.setOwner(owner);
@@ -137,7 +137,7 @@ public class ManagerController {
             List<Employee> allEmployees = project.getEmployees();
             model.addAttribute("allEmployees", allEmployees);
             model.addAttribute("newOrOld", ticket.getStatus() != null ? "old" : "new");
-            return "/projects/project-details-manager";
+            return "projects/project-details-manager";
         } else {
             Employee currentManager = employeeService.findByEmail(principal.getName());
             // ticket fields
@@ -254,7 +254,7 @@ public class ManagerController {
                 model.addAttribute("testerEmployees",testerEmployees);
                 model.addAttribute("newOrOld","old");
                 model.addAttribute("project",project);
-                return "/projects/project-form";
+                return "projects/project-form";
             }
         } else return "redirect:/board/manager?error";
     }
@@ -303,7 +303,7 @@ public class ManagerController {
                 model.addAttribute("allEmployees", allEmployees);
                 model.addAttribute("newOrOld","old");
                 model.addAttribute("ticket",ticket);
-                return "/projects/project-details-manager";
+                return "projects/project-details-manager";
             }
         } else return "redirect:/board/manager?error";
     }

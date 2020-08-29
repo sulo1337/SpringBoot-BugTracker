@@ -63,7 +63,7 @@
                 </div>
 
                 <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                <button class="btn btn-success" style="margin-top: 10px" type="submit">Submit</button>
+                <button id="sub-bt" class="btn btn-success" style="margin-top: 10px" type="submit">Submit</button>
             </form>
             <div th:if="${param.error}" class="alert alert-danger">
                 Error !
@@ -71,6 +71,7 @@
         </div>
     </div>
 </div>
+
 <script>
     if ("[[${bugSaved}]]"){
         iziToast.show({
@@ -87,6 +88,7 @@
         $('#bugTable').DataTable();
     });
     $('#bugForm').submit(function () {
+        document.getElementById('sub-bt').disabled=true;
         if (document.getElementById("validatedCustomFile").files.length == 0) {
             iziToast.show({
                 title: 'Error',
@@ -95,6 +97,7 @@
                 color:'red',
                 icon: 'fas fa-times'
             });
+            document.getElementById('sub-bt').disabled=false;
             return false;
         }
     });

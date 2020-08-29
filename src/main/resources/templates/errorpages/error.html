@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layouts::header"></head>
+<link th:href="@{/css/error-404.css}" rel="stylesheet" />
+<body>
+<div class="noise"></div>
+<div class="overlay"></div>
+<div class="terminal">
+    <h1>Error <span class="errorcode">Something Went Wrong</span></h1>
+    <p class="output">an unexpected error has occurred.</p>
+    <p class="output"><a sec:authorize="isAuthenticated()" th:href="@{/profile}">return to the homepage</a>
+        <a sec:authorize="!isAuthenticated()" th:href="@{/}">return to the homepage</a>
+        .</p>
+    <p class="output">Good luck.</p>
+</div>
+</body>
+</html>

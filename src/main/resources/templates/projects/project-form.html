@@ -9,7 +9,7 @@
 <body>
 
 <div class="container">
-    <form action="/board/manager/projects/save" th:object="${project}" method="POST">
+    <form id="project-form" action="/board/manager/projects/save" th:object="${project}" method="POST">
         <div >
             <div class="card bg-dark text-white">
                 <div class="card-header border-success" th:if="${newOrOld!='old'}">
@@ -80,10 +80,10 @@
                 </fieldset>
                 <!--submit button-->
                 <div class="col-md-2" th:if="${newOrOld!='old'}">
-                    <button class="btn btn-success" type="submit">Create Project</button>
+                    <button id="sub-bt-1" class="btn btn-success" type="submit">Create Project</button>
                 </div>
                 <div class="col-md-2" th:if="${newOrOld=='old'}">
-                    <button class="btn btn-success" type="submit">Update Project</button>
+                    <button id="sub-bt-2" class="btn btn-success" type="submit">Update Project</button>
                 </div>
             </div>
             <!--hidden fields needed-->
@@ -103,6 +103,16 @@
         format: 'yyyy-mm-dd',
         minDate: 0,
         startDate: new Date()
+    });
+</script>
+<script th:if="${newOrOld!='old'}">
+    $('#project-form').submit(function(){
+        document.getElementById('sub-bt-1').disabled=true;
+    });
+</script>
+<script th:if="${newOrOld=='old'}">
+    $('#project-form').submit(function(){
+        document.getElementById('sub-bt-2').disabled=true;
     });
 </script>
 </body>

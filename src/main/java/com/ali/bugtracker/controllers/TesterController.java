@@ -4,11 +4,13 @@ import com.ali.bugtracker.entities.Bug;
 import com.ali.bugtracker.entities.Employee;
 import com.ali.bugtracker.entities.Project;
 import com.ali.bugtracker.entities.Ticket;
+import com.ali.bugtracker.security.WebConfig;
 import com.ali.bugtracker.services.BugService;
 import com.ali.bugtracker.services.EmployeeService;
 import com.ali.bugtracker.services.ProjectService;
 import com.ali.bugtracker.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -32,8 +34,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/board/tester")
 public class TesterController {
-
-    private final String UPLOAD_DIR = "./src/main/resources/static/images/";
+    @Value("${uploadDir}")
+    private String UPLOAD_DIR;
 
     @Autowired
     TicketService ticketService;
@@ -55,7 +57,7 @@ public class TesterController {
             projectsTicketsToTest.put(project.getProjectId(), count);
         }
         String currentTesterName = tester.getFirstName() + "'s";
-        ;
+        model.addAttribute("currentTester",tester);
         model.addAttribute("currentTesterName", currentTesterName);
         model.addAttribute("projectsTicketsToTest", projectsTicketsToTest);
         model.addAttribute("projects", projects);

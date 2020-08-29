@@ -30,12 +30,16 @@
                 </div> <input type="checkbox" class="form-check-input ml-0" id="rememberMe" name="rememberMe"> <label class="form-check-label ml-3" for="rememberMe">Remember me?</label>
                 <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
             </form>
-            <button type="submit" class="btn btn-success btn-lg mt-5" form="sign-in-form">Sign in</button>
+            <button type="submit" class="btn btn-success btn-lg mt-5" id="sub-bt" form="sign-in-form">Sign in</button>
             <p class="exist mt-4">New user? <a href="/" th:href="@{/register}">Register Now</a></p>
         </div>
     </div>
 </div>
-
+<script>
+    $('#sign-in-form').submit(function(){
+        document.getElementById('sub-bt').disabled=true;
+    });
+</script>
 <script th:if="${param.logout}">
      iziToast.show({
             title: 'Logged out',

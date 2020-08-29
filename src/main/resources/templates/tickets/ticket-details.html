@@ -33,11 +33,11 @@
             <div sec:authorize="hasRole('ROLE_P')">
                 <span class="badge badge-warning">Leave a comment ?</span>
                 <div th:object="${comment}">
-                    <form th:action="@{${ticket.ticketId}+'/comments/save'}" method="post">
+                    <form id="comment-form" th:action="@{${ticket.ticketId}+'/comments/save'}" method="post">
                         <textarea th:field="${comment.commentText}" class="form-control"
                                   placeholder="Enter your comment here " style="resize: none"></textarea>
                         <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                        <button type="submit" class="btn btn-primary" style="margin-top: 5%">Submit</button>
+                        <button id="sub-bt" type="submit" class="btn btn-primary" style="margin-top: 5%">Submit</button>
                     </form>
                 </div>
             </div>
@@ -222,7 +222,7 @@
     if ("[[${commentError}]]"){
         iziToast.show({
             title: 'Error',
-            message: 'add ypur comment first',
+            message: 'add your comment first',
             position: 'topRight',
             color:'red',
             icon: 'fas fa-times'
@@ -234,6 +234,12 @@
         $('#commentTable').DataTable();
         $('#bugTable').DataTable();
     } );
+</script>
+
+<script>
+    $('#comment-form').submit(function(){
+        document.getElementById('sub-bt').disabled=true;
+    });
 </script>
 </body>
 </html>

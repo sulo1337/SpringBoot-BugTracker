@@ -38,7 +38,7 @@ public class SecurityController {
         if(principal!=null)
             return "redirect:/profile";
         else
-            return "/main/index";
+            return "main/index";
     }
 
     @GetMapping("/register")
@@ -48,14 +48,14 @@ public class SecurityController {
         else {
         Employee employee =new Employee();
         model.addAttribute("employee",employee);
-        return "/main/register";
+        return "main/register";
         }
     }
 
     @PostMapping("/register/save")
     public String saveEmployee(@Valid Employee employee, BindingResult bindingResult , Model model, HttpServletRequest request){
         if (bindingResult.hasErrors()) {
-            return "/main/register";
+            return "main/register";
         }
         else {
             employee.setPassword(bCryptPasswordEncoder.encode(employee.getPassword()));
