@@ -1,9 +1,5 @@
 package com.ali.bugtracker.entities;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -13,8 +9,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Getter @Setter @NoArgsConstructor
 public class Ticket extends Auditable<String> {
+    public Ticket() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +20,94 @@ public class Ticket extends Auditable<String> {
     @ManyToOne
     @JoinColumn(name="employee_id")
     private Employee employeeId;
+
+    public long getTicketId() {
+        return ticketId;
+    }
+
+    public void setTicketId(long ticketId) {
+        this.ticketId = ticketId;
+    }
+
+    public Employee getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Employee employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public Employee getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Employee owner) {
+        this.owner = owner;
+    }
+
+    public Project getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Project projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public List<Bug> getBugs() {
+        return bugs;
+    }
+
+    public void setBugs(List<Bug> bugs) {
+        this.bugs = bugs;
+    }
+
+    public List<History> getHistories() {
+        return histories;
+    }
+
+    public void setHistories(List<History> histories) {
+        this.histories = histories;
+    }
 
     @ManyToOne
     @JoinColumn(name="owner")

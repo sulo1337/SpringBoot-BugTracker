@@ -14,7 +14,6 @@ import java.util.Date;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@Getter @Setter
 public class Auditable<U> {
 
     @Column(updatable = false)
@@ -29,5 +28,27 @@ public class Auditable<U> {
     @Temporal(TemporalType.DATE)
     protected Date lastModifiedDate;
 
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public U getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(U lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 }

@@ -8,8 +8,11 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter @NoArgsConstructor
+
 public class History {
+    public History() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long historyId;
@@ -17,6 +20,46 @@ public class History {
     @ManyToOne
     @JoinColumn(name="employee_id")
     private Employee employeeId;
+
+    public long getHistoryId() {
+        return historyId;
+    }
+
+    public void setHistoryId(long historyId) {
+        this.historyId = historyId;
+    }
+
+    public Employee getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Employee employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public Ticket getTicketId() {
+        return ticketId;
+    }
+
+    public void setTicketId(Ticket ticketId) {
+        this.ticketId = ticketId;
+    }
+
+    public String getEvent() {
+        return event;
+    }
+
+    public void setEvent(String event) {
+        this.event = event;
+    }
+
+    public String getModificationDate() {
+        return modificationDate;
+    }
+
+    public void setModificationDate(String modificationDate) {
+        this.modificationDate = modificationDate;
+    }
 
     @ManyToOne
     @JoinColumn(name = "ticket_id")

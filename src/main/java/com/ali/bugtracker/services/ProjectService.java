@@ -4,7 +4,6 @@ import com.ali.bugtracker.dto.ChartData;
 import com.ali.bugtracker.entities.Employee;
 import com.ali.bugtracker.entities.Project;
 import com.ali.bugtracker.repositories.ProjectRepository;
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;

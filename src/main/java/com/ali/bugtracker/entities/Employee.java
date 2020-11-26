@@ -1,9 +1,6 @@
 package com.ali.bugtracker.entities;
 
 import com.ali.bugtracker.customValidators.UniqueEmail;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -13,8 +10,11 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
-@Getter @Setter @NoArgsConstructor
+
+
 public class Employee {
+    public Employee() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,5 +67,99 @@ public class Employee {
         this.enabled=false;
     }
 
+    public long getEmployeeId() {
+        return employeeId;
+    }
 
+    public void setEmployeeId(long employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
+    }
+
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<Ticket> tickets) {
+        this.tickets = tickets;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public List<Bug> getBugs() {
+        return bugs;
+    }
+
+    public void setBugs(List<Bug> bugs) {
+        this.bugs = bugs;
+    }
+
+    public List<History> getHistories() {
+        return histories;
+    }
+
+    public void setHistories(List<History> histories) {
+        this.histories = histories;
+    }
 }

@@ -1,16 +1,14 @@
 package com.ali.bugtracker.entities;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
-@Entity @Getter @Setter @NoArgsConstructor
+@Entity
 @Table(name = "confirmation_token")
 public class ConfirmationToken {
+    public ConfirmationToken() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +23,43 @@ public class ConfirmationToken {
     @JoinColumn(nullable = false, name = "employee_id")
     private Employee employee;
 
+    public long getTokenId() {
+        return tokenId;
+    }
+
+    public void setTokenId(long tokenId) {
+        this.tokenId = tokenId;
+    }
+
+    public String getConfirmationToken() {
+        return confirmationToken;
+    }
+
+    public void setConfirmationToken(String confirmationToken) {
+        this.confirmationToken = confirmationToken;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
     public ConfirmationToken(Employee employee) {
         this.employee = employee;
         createdDate = new Date();
         confirmationToken = UUID.randomUUID().toString();
     }
+
+
 }

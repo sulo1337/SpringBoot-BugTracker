@@ -3,9 +3,7 @@ package com.ali.bugtracker.entities;
 import com.ali.bugtracker.customValidators.FutureDate;
 import com.ali.bugtracker.customValidators.TimeFormat;
 import com.ali.bugtracker.customValidators.UniqueProject;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -17,8 +15,10 @@ import java.util.List;
 
 
 @Entity
-@Getter @Setter @NoArgsConstructor
+
 public class Project extends Auditable<String> {
+    public Project() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,7 +53,71 @@ public class Project extends Auditable<String> {
     @OneToMany(mappedBy = "projectId")
     private List<Ticket> tickets;
 
-    public Project(Employee owner, String name, String description,String deadline, String status) {
+    public long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(long projectId) {
+        this.projectId = projectId;
+    }
+
+    public Employee getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Employee owner) {
+        this.owner = owner;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(String deadline) {
+        this.deadline = deadline;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(List<Employee> employees) {
+        this.employees = employees;
+    }
+
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<Ticket> tickets) {
+        this.tickets = tickets;
+    }
+
+    public Project(Employee owner, String name, String description, String deadline, String status) {
         this.owner = owner;
         this.name = name;
         this.description = description;
