@@ -64,7 +64,7 @@ public class SecurityController {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setTo(employee.getEmail());
             mailMessage.setSubject("Complete Registration In Bug Tracker!");
-            mailMessage.setFrom("sulochan.acharya2@gmail.com");
+            mailMessage.setFrom("bugtracker@sulochanacharya.com");
             // format the path in case i am not running on localHost:8080
             StringBuffer fullReqPath = request.getRequestURL();
             String reqPath = fullReqPath.delete(fullReqPath.indexOf("register"), fullReqPath.length()).toString();
